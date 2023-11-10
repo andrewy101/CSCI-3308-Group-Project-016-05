@@ -6,6 +6,10 @@ require('dotenv').config();
 const app = express();
 const db = pgp(dbConfig);
 
-app.listen(3000, () => {
-    console.log('listening on port 3000');
-});
+module.exports = app.listen(3000);
+
+app.get('/welcome', (req, res) => {
+    res.json({status: 'success', message: 'Welcome!'});
+  });
+
+  
