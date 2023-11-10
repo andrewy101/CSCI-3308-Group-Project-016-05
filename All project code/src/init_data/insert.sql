@@ -1,0 +1,1 @@
+insert into users (user_id, username, password) values (0, 'username', 'password');
