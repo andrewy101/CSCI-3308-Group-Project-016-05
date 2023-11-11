@@ -51,9 +51,35 @@ app.use(
   })
 );
 
-
+//Welcome endpoint
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
+});
+
+//Login endpoint
+app.post('/login', (req, res) => {
+
+  username = req.body.username;
+  password = req.body.password;
+
+  const query = `select * from users where username = $1 AND password = $2`;
+  db.any(query, [username, password])
+
+    .then(data => {
+      res.status(200).json({
+        message: 'Success',
+      });
+    })
+    // if query execution fails
+    // send error message
+    .catch(err => {
+      console.log(err);
+      res.status('400').json({
+        error: err,
+      });
+    });
+  
+
 });
 
 module.exports = app.listen(3000);
