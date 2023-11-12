@@ -2,7 +2,7 @@
 Final project
 
 Brief Application Description:
-For individuals and families who are seeking an efficient way to manage their finances, the BudgetBeam is a budgeting app that simplifies the process.
+BudgetBeam is a web application that allows users to track their monthly expenses. BudgetBeam utilizes NodeJS, EJS, and PostgreSQL to provide visuals and an expense report to ensure that users are staying within their budget so as to ensure proper financial management.
 
 Contributors:
 Andrew Yang, Patrick Hunt, Michael Thomas, Julie Huang
