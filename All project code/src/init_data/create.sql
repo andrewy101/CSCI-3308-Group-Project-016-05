@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS users(
-    user_id SERIAL PRIMARY KEY,
-    username VARCHAR(50),
-    password VARCHAR(60)
+    username VARCHAR(50) PRIMARY KEY,
+    password CHAR(60) NOT NULL
 );
 
 
-insert into users (user_id, username, password) values (0, 'username', 'password');
+insert into users (username, password) values ('username', '$2b$10$VpZ9G.GO/fvygz/C3I333OERjkMdtQQQ7NNSQ3O7mY8FADhSEgKUm');

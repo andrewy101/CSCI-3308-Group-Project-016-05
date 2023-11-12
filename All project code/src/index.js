@@ -51,35 +51,83 @@ app.use(
   })
 );
 
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+
 //Welcome endpoint
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
 
+
+//Get login
+app.get('/login', (req, res) => {
+  res.render('pages/login')
+});
+
+//Register (get)
+app.get('/register', (req, res) => {
+  res.render('pages/register');
+});
+
+
+
+app.post('/register', async (req, res) => {
+  //hash the password using bcrypt library
+  const hash = await bcrypt.hash(req.body.password, 10);
+
+  if(hash.err){
+    console.log('Error hashing password');
+  }
+  else{
+    const query = `insert into users (username, password) values($1, $2)`
+    const insertQuery = await db.any(query, [req.body.username, hash]);
+    if(insertQuery.err){
+      res.redirect('/register');
+    }
+    else{
+      res.redirect('/login');
+    }
+  }
+});
+
 //Login endpoint
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
 
-  username = req.body.username;
-  password = req.body.password;
+  userQuery = `select * from users where username = $1`;
+  const find_user = await db.any(userQuery, [req.body.username]);
 
-  const query = `select * from users where username = $1 AND password = $2`;
-  db.any(query, [username, password])
+  if(find_user.length == 0){
+    res.redirect('/register');
+   
+  }
 
-    .then(data => {
-      res.status(200).json({
-        message: 'Success',
-      });
-    })
-    // if query execution fails
-    // send error message
-    .catch(err => {
-      console.log(err);
-      res.status('400').json({
-        error: err,
-      });
-    });
+  else if(!find_user){
+    
+    res.json({status: 'success', message: 'Invalid input'});
+  }
+ 
+  else{
+    // check if password from request matches with password in DB
+    const user = find_user[0];
+    const match = await bcrypt.compare(req.body.password, user.password);
+    if(!match){
+      res.render('pages/login', {
+        message: "Incorrect username or password.",
+        error: true
+      })
+    }
+    else{
+      req.session.user = user;
+      req.session.save();
+      res.json({status: 'success', message: 'Success'});
+    }
+
+  }
   
-
 });
 
 module.exports = app.listen(3000);
