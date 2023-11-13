@@ -1,7 +1,3 @@
-// *****************************************************
-// <!-- Section 1 : Import Dependencies -->
-// *****************************************************
-
 const express = require('express'); // To build an application server or API
 const app = express();
 const pgp = require('pg-promise')(); // To connect to the Postgres DB from the node server
@@ -9,10 +5,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
 const bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
-
-// *****************************************************
-// <!-- Section 2 : Connect to DB -->
-// *****************************************************
 
 // database configuration
 const dbConfig = {
@@ -62,7 +54,6 @@ app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
 
-
 //Get login
 app.get('/login', (req, res) => {
   res.render('pages/login')
@@ -73,8 +64,7 @@ app.get('/register', (req, res) => {
   res.render('pages/register');
 });
 
-
-
+//Register endpoint (POST)
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
   const hash = await bcrypt.hash(req.body.password, 10);
@@ -83,49 +73,49 @@ app.post('/register', async (req, res) => {
     console.log('Error hashing password');
   }
   else{
-    const query = `insert into users (username, password) values($1, $2)`
-    const insertQuery = await db.any(query, [req.body.username, hash]);
-    if(insertQuery.err){
-      res.redirect('/register');
+    try{
+      const query = `insert into users (username, password) values($1, $2)`
+      await db.any(query, [req.body.username, hash]);
+      res.send({status:'failure', message:'Success'});
+      //res.redirect('/login'); Need to figure out how to implement this
     }
-    else{
-      res.redirect('/login');
+    catch(error){
+      res.send({status:'failure', message:'Username taken'});
     }
   }
 });
 
-//Login endpoint
+//Login endpoint (POST)
 app.post('/login', async (req, res) => {
 
   userQuery = `select * from users where username = $1`;
-  const find_user = await db.any(userQuery, [req.body.username]);
-
-  if(find_user.length == 0){
-    res.redirect('/register');
+  try{
+    const find_user = await db.any(userQuery, [req.body.username]);
+    if(find_user.length == 0){
+      res.redirect('/register');
+     
+    }
    
-  }
-
-  else if(!find_user){
-    
-    res.json({status: 'success', message: 'Invalid input'});
-  }
- 
-  else{
-    // check if password from request matches with password in DB
-    const user = find_user[0];
-    const match = await bcrypt.compare(req.body.password, user.password);
-    if(!match){
-      res.render('pages/login', {
-        message: "Incorrect username or password.",
-        error: true
-      })
-    }
     else{
-      req.session.user = user;
-      req.session.save();
-      res.json({status: 'success', message: 'Success'});
+      // check if password from request matches with password in DB
+      const user = find_user[0];
+      const match = await bcrypt.compare(req.body.password, user.password);
+      if(!match){
+        res.render('pages/login', {
+          message: "Incorrect username or password.",
+          error: true
+        })
+      }
+      else{
+        req.session.user = user;
+        req.session.save();
+        res.json({status: 'failure', message: 'Success'});
+      }
+  
     }
-
+  }
+  catch(error){
+    res.json({status: 'success', message: 'Invalid input'});
   }
   
 });
