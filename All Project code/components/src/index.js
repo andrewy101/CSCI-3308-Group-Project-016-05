@@ -64,38 +64,55 @@ app.get('/register', (req, res) => {
   res.render('pages/register');
 });
 
+//Register (home)
+app.get('/home', (req, res) => {
+  res.render('pages/home');
+});
+
 //Register endpoint (POST)
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
   const hash = await bcrypt.hash(req.body.password, 10);
-
+  // To-DO: Insert username and hashed password into the 'users' table
   if(hash.err){
     console.log('Error hashing password');
   }
   else{
     try{
       const query = `insert into users (username, password) values($1, $2)`
-      await db.any(query, [req.body.username, hash]);
-      res.send({status:'failure', message:'Success'});
-      //res.redirect('/login'); Need to figure out how to implement this
+      const insertQuery = await db.any(query, [req.body.username, hash]);
+      res.redirect('/login');
+
     }
-    catch(error){
-      res.send({status:'failure', message:'Username taken'});
+    catch{
+      res.render('pages/register', {
+        error: true,
+        message: 'Username taken!'
+
+      });
     }
+    
   }
 });
 
 //Login endpoint (POST)
+app.get('/login', (req, res) => {
+  res.render('pages/login')
+});
+
+//Login (post)
 app.post('/login', async (req, res) => {
 
-  userQuery = `select * from users where username = $1`;
   try{
+    userQuery = `select * from users where username = $1`;
     const find_user = await db.any(userQuery, [req.body.username]);
+
+    
     if(find_user.length == 0){
       res.redirect('/register');
-     
-    }
    
+    }
+ 
     else{
       // check if password from request matches with password in DB
       const user = find_user[0];
@@ -109,14 +126,19 @@ app.post('/login', async (req, res) => {
       else{
         req.session.user = user;
         req.session.save();
-        res.json({status: 'failure', message: 'Success'});
+        res.redirect('/home');
       }
-  
+
     }
-  }
-  catch(error){
-    res.json({status: 'success', message: 'Invalid input'});
-  }
+
+    }
+    catch(error){
+      res.render('pages/login', {
+        message: "Invalid input!",
+        error: true
+      })
+    }
+  
   
 });
 
