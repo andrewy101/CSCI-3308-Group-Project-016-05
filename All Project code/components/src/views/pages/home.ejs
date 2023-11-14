@@ -1,14 +1,24 @@
 <%- include ('../partials/head') %>
 <%- include ('../partials/menu') %>
 
+
+
 <main>
+
 
   <div class="col"><%- include ('../partials/message') %></div>
   <div class="container">
 
     <h1>Homepage</h1>
     
-    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+    <div id="chartContainer"></div>
+    <div id="expenseDisplay">
+      <h2>Expense Overview</h2>
+      <p>Total Expenses: $1234</p>
+      <p>Budget: $1234</p>
+      <p>Status: <span id="budgetStatus">Within Budget</span></p>
+      <button onclick="">Adjust Budget</button>
+  </div>
   </div>
 </main>
 
