@@ -49,6 +49,7 @@ app.use(
   })
 );
 
+
 //Welcome endpoint
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
@@ -59,15 +60,20 @@ app.get('/login', (req, res) => {
   res.render('pages/login')
 });
 
+//Logout (get)
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.render('pages/login', {
+    message: "Logged out successfully!",
+    error: false
+  })
+});
+
 //Register (get)
 app.get('/register', (req, res) => {
   res.render('pages/register');
 });
 
-//Register (home)
-app.get('/home', (req, res) => {
-  res.render('pages/home');
-});
 
 //Register endpoint (POST)
 app.post('/register', async (req, res) => {
@@ -95,10 +101,6 @@ app.post('/register', async (req, res) => {
   }
 });
 
-//Login endpoint (POST)
-app.get('/login', (req, res) => {
-  res.render('pages/login')
-});
 
 //Login (post)
 app.post('/login', async (req, res) => {
@@ -140,6 +142,20 @@ app.post('/login', async (req, res) => {
     }
   
   
+});
+// Authentication Middleware.
+const auth = (req, res, next) => {
+  if (!req.session.user) {
+    // Default to login page.
+    return res.redirect('/login');
+  }
+  next();
+};
+app.use(auth);
+
+//Register (home)
+app.get('/home', (req, res) => {
+  res.render('pages/home');
 });
 
 module.exports = app.listen(3000);

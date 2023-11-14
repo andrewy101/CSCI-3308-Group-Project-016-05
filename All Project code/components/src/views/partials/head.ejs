@@ -6,7 +6,6 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
-    <title>CSCI 3308 Lab 9</title>
     <!-- TO-DO: Add the <link> tag to include bootstrap stylesheet -->
     <!-- Bootstrap CSS library -->
     <link
@@ -22,6 +21,32 @@
         crossorigin="anonymous"
     >
     </script>
+    <script>
+      window.onload = function() {
+      
+      var chart = new CanvasJS.Chart("chartContainer", {
+        animationEnabled: true,
+        title: {
+          text: "Current Monthly Expenses"
+        },
+        data: [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints: [
+            {y: 79.45, label: "Auto"},
+            {y: 7.31, label: "Entertainment"},
+            {y: 7.06, label: "Food"},
+            {y: 4.91, label: "School"},
+            {y: 1.26, label: "Other"}
+          ]
+        }]
+      });
+      chart.render();
+      
+      }
+      </script>
     <!-- Bootstrap icons library -->
     <link
         rel="stylesheet"
