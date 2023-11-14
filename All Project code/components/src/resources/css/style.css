@@ -7,4 +7,21 @@
     color:white; font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 
 }
+#chartContainer {
+    width: 50%;
+    float: left;
+}
+
+#expenseDisplay {
+    width: 50%;
+    float: right;
+    padding: 20px;
+}
+
+/* Clear the float to ensure the next element is below both floated elements */
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
 
