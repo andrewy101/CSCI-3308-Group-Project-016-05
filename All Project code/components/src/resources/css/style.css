@@ -1,12 +1,3 @@
-#budgetBeamFooter{
-
-    background-color: rgb(20, 20, 86);
-}
-
-#footer-text{
-    color:white; font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-
-}
 #chartContainer {
     width: 50%;
     float: left;
@@ -18,10 +9,19 @@
     padding: 20px;
 }
 
-/* Clear the float to ensure the next element is below both floated elements */
 .clearfix::after {
     content: "";
     clear: both;
     display: table;
 }
 
+#menu_bar, #budget_footer{
+    background-color: rgb(20, 20, 86);
+}
+#menu_logo{
+    font-style:italic; font-weight: bold;
+}
+#budget_footer p{
+    color:white;
+    font-style:italic; font-weight: bold;
+}
