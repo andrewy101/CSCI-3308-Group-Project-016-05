@@ -1,10 +1,27 @@
-#budgetBeamFooter{
+#chartContainer {
+    width: 50%;
+    float: left;
+}
 
+#expenseDisplay {
+    width: 50%;
+    float: right;
+    padding: 20px;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+#menu_bar, #budget_footer{
     background-color: rgb(20, 20, 86);
 }
-
-#footer-text{
-    color:white; font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-
+#menu_logo{
+    font-style:italic; font-weight: bold;
 }
-
+#budget_footer p{
+    color:white;
+    font-style:italic; font-weight: bold;
+}

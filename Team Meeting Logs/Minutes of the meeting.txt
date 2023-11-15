@@ -1,0 +1,23 @@
+Meeting 1, 11/09/2023:
+Modality: Zoom
+Duration: 15 minutes
+
+Progress: Finished document for lab 10, finished use case diagram, set up code skeleton, set up project board, decided on final app idea, allocated workload for the week.
+New expense page: We plan on users being able to assign categories to each expense and income. TA says everything looks good.
+Look at splitwise app, maybe consider including tesseract for the project.
+
+Everything looks good so far, plan work for the next week, use branches, keep in backlog until assigned to someone then move to todo, list things we are going to do next week.
+
+
+Meeting 2, 11/16/2023
+Modality: Zoom
+Duration: 15 minutes
+
+
+Decisions made: 
+
+Alternative actions/options discussed:
+
+Follow-up items, including agreed-on roles and responsibilities:
+
+
