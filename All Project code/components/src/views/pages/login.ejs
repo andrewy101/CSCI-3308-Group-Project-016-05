@@ -1,34 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include ('../partials/head') %>
+<%- include ('../partials/menu') %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BudgetBeam - Login</title>
-    <!-- <link rel="stylesheet" href="styles.css"> -->
-</head>
+<main>
 
-<body>
-    <div class="container">
-        <form id="loginForm" onsubmit="submitForm(event)">
-            <h2>Login to Your Account</h2>
+  <div class="col"><%- include ('../partials/message') %></div>
+  <title>BudgetBeam - Login</title>
+  <div class="container">
 
-            <!-- Username Input -->
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-
-            <!-- Password Input -->
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-
-            <!-- Login Button to Submit -->
-            <button type="submit">Login</button>
-
-            <!-- Display Messages -->
-            <div id="message"></div>
+    <form action="/login" method="POST">
+        <h2 class="display-4" style="text-align:center;">Welcome to BudgetBeam!</h2>
+        <h2>Login to Your Account</h2>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" class="form-control" name="username" />
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" name="password" />
+          </div>
+        <p>Don't have an account? <a href="/register">Register</a></p>
+        <button type="submit" class="btn btn-primary">Login</button>
         </form>
+  </div>
+ 
+</main>
 
-    </div>
-</body>
-
-</html>
+<%- include ('../partials/footer') %>
