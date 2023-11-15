@@ -56,6 +56,16 @@ app.get('/home', (req, res) => {
   res.render('pages/home');
 });
 
+app.get('/report', (req, res) => {
+  res.render('pages/report');
+});
+
+app.get('/profile', (req, res) => {
+  res.render('pages/profile');
+});
+app.get('/expenses', (req, res) => {
+  res.render('pages/expenses');
+});
 //Welcome endpoint
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
