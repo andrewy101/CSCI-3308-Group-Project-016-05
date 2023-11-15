@@ -1,7 +1,22 @@
 CREATE TABLE IF NOT EXISTS users(
-    username VARCHAR(50) PRIMARY KEY,
+    username VARCHAR(50) PRIMARY KEY NOT NULL,
     password CHAR(60) NOT NULL
 );
 
---This is a dummy insert with the credentials 'username, password' to make sure that the test cases pass.
-insert into users (username, password) values ('username', '$2b$10$VpZ9G.GO/fvygz/C3I333OERjkMdtQQQ7NNSQ3O7mY8FADhSEgKUm');
+CREATE TABLE IF NOT EXISTS expenses(
+    username VARCHAR(50) NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    amount FLOAT NOT NULL,
+    date DATE,
+    FOREIGN KEY (username) REFERENCES users (username)
+);
+
+CREATE TABLE IF NOT EXISTS default_categories(
+    category VARCHAR(50) PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS custom_categories(
+    category VARCHAR(50) NOT NULL,
+    username VARCHAR(50) NOT NULL
+);
