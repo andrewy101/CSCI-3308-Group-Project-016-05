@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS expenses(
 );
 
 CREATE TABLE IF NOT EXISTS default_categories(
-    category VARCHAR(50) PRIMARY KEY NOT NULL,
+    category VARCHAR(50) PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS custom_categories(
