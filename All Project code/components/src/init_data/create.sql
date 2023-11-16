@@ -4,9 +4,9 @@ CREATE TABLE IF NOT EXISTS users(
 );
 
 CREATE TABLE IF NOT EXISTS expenses(
+    expense_id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
     category VARCHAR(50) NOT NULL,
-    name VARCHAR(50) NOT NULL,
     amount FLOAT NOT NULL,
     date DATE,
     FOREIGN KEY (username) REFERENCES users (username)
