@@ -1,3 +1,11 @@
+Information About User Acceptance Testers: 
+
+	The user acceptance testers who will be testing these features for our web application will all be college students with average 
+	technology skills. The goal is to focus on users who are not very technologically savvy, because if these users are able to pass all of our tests for these features, it is 
+	a good indicator that our features are working as expected. We want our UI to be as user-friendly as possible, and selecting testers who are not very technologically savvy will
+	help us ensure that our UI is easy to use and is easily navigable. We will also try to include an acceptance tester who is older and belongs to an age group that is less
+	likely to know a lot about technology.  
+
 Test Case 1: User login
 
 	Description of Test Data: The test data for this test case will include the user's username and password. Both of these are stored in the users table in the database. 
@@ -15,7 +23,6 @@ Test Case 1: User login
 		
 		- Fail: This test will fail if the user enters improper credentials into the login form. For example, if the username is correct, but the password is incorrect, the webpage will display an appropriate error message, and the user will have failed the task.
 		If the user is not able to be granted access to the homepage, they have not passed the test.
-
 
 
 Test Case 2: Add expense
