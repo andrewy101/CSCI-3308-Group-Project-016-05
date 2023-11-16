@@ -1,12 +1,12 @@
 <%- include ('../partials/head') %>
-<%- include ('../partials/menu') %>
+<%- include ('../partials/menuBlank') %>
 
 <main>
   
   <div class="col"><%- include ('../partials/message') %></div>
   <div class="container">
     <form action="/register" method="POST">
-        
+        <h2 class="display-4" style="text-align:center;">Welcome to BudgetBeam!</h2>
         <h2>Register</h2>
         <div class="form-group">
           <label for="username">Username</label>
@@ -17,6 +17,7 @@
             <input type="password" class="form-control" name="password" />
           
           </div>
+        <p>Already have an account? <a href="/login">Login</a></p>
         <button type="submit" class="btn btn-primary">Register</button>
         </form>
   </div>

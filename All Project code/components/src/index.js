@@ -51,21 +51,77 @@ app.use(
 );
 app.use(express.static(path.join(__dirname, 'resources')));
 
+app.get('/', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+  res.redirect('/home');
+});
+
+const user = {
+  username: undefined
+}
+
 //Home endpoint
 app.get('/home', (req, res) => {
+  if (!req.session.user && !req.query.login) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  } 
+  
   res.render('pages/home');
+
 });
 
 app.get('/report', (req, res) => {
+  if (!req.session.user) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  } 
   res.render('pages/report');
 });
 
 app.get('/profile', (req, res) => {
+  if (!req.session.user) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  } 
   res.render('pages/profile');
 });
+
+// Display expense table
 app.get('/expenses', (req, res) => {
-  res.render('pages/expenses');
+  if (!req.session.user) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  }  
+  db.any(`SELECT * FROM expenses WHERE username = $1
+          ORDER BY date DESC;`, [req.session.user.username])
+  .then(expenses => {
+    res.render('pages/expenses', {
+      expenses
+    });
+  });
 });
+
+// Delete expense rows
+app.post('/expenses/delete', (req, res) => {
+  if (req.session.user) {
+    db.tx(async t => {
+      await t.none(`DELETE from expenses WHERE expense_id = $1;`, [parseInt(req.body.expense_id)]);
+      res.redirect('/expenses');
+    });
+  }
+});
+
 //Welcome endpoint
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
@@ -87,12 +143,22 @@ app.get('/logout', (req, res) => {
 
 //Register (get)
 app.get('/register', (req, res) => {
+  if (req.session.user) {
+    req.session.destroy();
+  }
   res.render('pages/register');
 });
 
 
 //Register endpoint (POST)
 app.post('/register', async (req, res) => {
+  // Can't have blank username or password
+  if (req.body.username === '' || req.body.password === '') {
+    return res.render('pages/register', {
+      message: 'Fields cannot be blank.',
+      error: true
+    })
+  }
   //hash the password using bcrypt library
   const hash = await bcrypt.hash(req.body.password, 10);
   // To-DO: Insert username and hashed password into the 'users' table
@@ -104,7 +170,6 @@ app.post('/register', async (req, res) => {
       const query = `insert into users (username, password) values($1, $2)`
       const insertQuery = await db.any(query, [req.body.username, hash]);
       res.redirect('/login');
-
     }
     catch{
       res.render('pages/register', {
@@ -120,21 +185,22 @@ app.post('/register', async (req, res) => {
 
 //Login (post)
 app.post('/login', async (req, res) => {
-
   try{
     userQuery = `select * from users where username = $1`;
     const find_user = await db.any(userQuery, [req.body.username]);
 
     
     if(find_user.length == 0){
-      res.redirect('/register');
-   
+      res.render('pages/login', {
+        message: 'User not found.',
+        error: true
+      });
     }
  
     else{
       // check if password from request matches with password in DB
-      const user = find_user[0];
-      const match = await bcrypt.compare(req.body.password, user.password);
+      const user_found = find_user[0];
+      const match = await bcrypt.compare(req.body.password, user_found.password);
       if(!match){
         res.render('pages/login', {
           message: "Incorrect username or password.",
@@ -142,10 +208,12 @@ app.post('/login', async (req, res) => {
         })
       }
       else{
+        user.username = user_found.username;
+
         req.session.user = user;
         req.session.save();
     
-        res.redirect('/home');
+        res.redirect('/home?login=true');
       }
 
     }
@@ -160,6 +228,5 @@ app.post('/login', async (req, res) => {
   
   
 });
-
 
 module.exports = app.listen(3000);
