@@ -9,9 +9,11 @@
         <table class="table">
           <thead class="thead-light">
             <tr>
+              <th scope="col">Description</th>
               <th scope="col">Date</th>
-              <th scope="col">Amount</th>
               <th scope="col">Category</th>
+              <th scope="col">Amount</th>
+              
               <th scope="col"></th>
             </tr>
           </thead>
@@ -23,6 +25,7 @@
                   <tr id="<%=expenses[i].expense_id%>">
                       <form action="<%-formAction%>" method="POST">
                           <input type="hidden" name="expense_id" value="<%=expenses[i].expense_id%>"/>
+                          <td class="row-data"><%=expenses[i].description%></td>
                           <td class="row-data"><%=expenses[i].date.toLocaleDateString()%></td>
                           <td class="row-data"><%=expenses[i].category%></td>
                           <td class="row-data"><%=expenses[i].amount%></td>

@@ -70,7 +70,9 @@ app.get('/home', (req, res) => {
       error: true
     });
   } 
+  
   res.render('pages/home');
+
 });
 
 app.get('/report', (req, res) => {
