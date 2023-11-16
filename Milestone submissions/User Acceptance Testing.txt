@@ -1,43 +1,70 @@
-User is able to enter their monthly income and expenses and sort them into categories:
-	Action:
-		Upon visiting the "New income/expenses" page, users are able to enter their monthly income and expenses into boxes and click the submit button which then adds the income or expense to the database.
+Information About User Acceptance Testers: 
 
-	Reaction:
-		If the user’s input is not valid (e.g. strings, negative integers) a message is displayed to the user clearly describing the error.
-		When the data is added to the database, it must be structured correctly and go into the correct rows and columns.
+	The user acceptance testers who will be testing these features for our web application will all be college students with average 
+	technology skills. The goal is to focus on users who are not very technologically savvy, because if these users are able to pass all of our tests for these features, it is 
+	a good indicator that our features are working as expected. We want our UI to be as user-friendly as possible, and selecting testers who are not very technologically savvy will
+	help us ensure that our UI is easy to use and is easily navigable. We will also try to include an acceptance tester who is older and belongs to an age group that is less
+	likely to know a lot about technology.  
 
-	Environment:
-		The test data will include values that cause the net income to be negative, and values that include the net income to be positive to ensure that all parts of our system can handle these values correctly.
-		The test will take place on a docker environment running locally.
-		The user acceptance tester will be a college student who can make use of the app to assist them in managing their finances.
+Test Case 1: User login
+
+	Description of Test Data: The test data for this test case will include the user's username and password. Both of these are stored in the users table in the database. 
+	
+	Description of Test Environment: The test environment will consist of our web application running locally on the user's machine.
+
+	User Interaction/Steps:
+		1. The user will navigate to the login page.
+		2. The user will enter the proper credentials needed to login (username and password) into the appropriate fields on the login page.
+		3. The user will locate the login button after entering the credentials, and click on it. 
+
+	Description of test results:
+
+		- Pass: This test will pass when the user is able to successfully be redirected to the home/dashboard page after logging in. This indicates that the user has successfully entered the correct data to the login form, and now has a valid session.
+		
+		- Fail: This test will fail if the user enters improper credentials into the login form. For example, if the username is correct, but the password is incorrect, the webpage will display an appropriate error message, and the user will have failed the task.
+		If the user is not able to be granted access to the homepage, they have not passed the test.
 
 
-User is able to view an overview of their monthly finances:
-	Action:
-		The user navigates to the monthly expenses or income page to view an overview of their monthly finances. The user can select a certain category from the drop down menu to display the expenses or income within that category.
+Test Case 2: Add expense
 
-	Reaction:
-		When visiting the monthly expenses or income page, the user is shown a diagram showing their income or expenses for the month.
-		When viewing the monthly expenses page, the user is shown their total expenses and total savings.
+	Description of Test Data: The test data included for this test includes a description of the user's expense (string), a category for the expense (string), a date for when the expense occurred (date), 
+	and an amount for the expense (float). The data will be entered via a form on the webpage, submitted by the user. 
+	
+	Description of Test Environment: The test environment will consist of our web application running locally on the user's machine.
 
-	Environment:
-		The test data will include extreme values to check whether the diagram is able to handle such values.
-		The test will take place on a docker environment running locally.
-		The user acceptance tester will be a college student who can make use of the app to assist them in managing their finances.
+	User Interaction/Steps:
+		1. The user will login and navigate to the homepage. 
+		2. The user will click on the "Expenses" tab on the menu.
+		3. The user will then click on the dropdown button, and click on "Add expense"
+		4. The user will fill out the fields in the form with the proper data, and then press the "Submit" button to submit the form. 
+
+	Description of test results:
+
+		- Pass: This test will pass if the user receives a message stating that they have successfully added a new expense. The new expense should then appear on the "/expenses"
+		page along with all of the other added expenses. 
+
+		- Fail: This test will fail if the user enters incorrect data types, such as an integer for the description of the expense, or a string for the amount of the expense. 
+		An appropriate error message will be displayed upon this event.
 
 
-User is able to generate an expense/income report:
-	Action:
-		The user can request an expense or income report for a specific month by selecting the month and clicking "show expense report".
+Test Case 3: Generate expense report
 
-	Reaction:
-		When the user requests an expense or income report for a specific month, data from the database is displayed in an easily readable table containing the expenses or income from that specific month.
-		The data will be compared to the data in the tables to ensure that the correct data is being queried.
-		The report must display the correct date that was assigned to the expense. 
-		The expense or income report should display the data in an easy to read format with the name of each expense being shown along with the category it belongs to.
+	Description of Test Data: The test data used for this test case will include expense data that is stored in the database in the 'expenses' table. The data will be aggregated into a 
+	report and will be displayed to the user. The specific columns include description (string), category (string), amount (float), and date (date).
+	
+	Description of Test Environment: The test environment will consist of our web application running locally on the user's machine.
 
-	Environment:
-		The test data will include the data used for testing the monthly income and expense case.
-		The test will take place on a docker environment running locally.
-		The user acceptance tester will be a college student who can make use of the app to assist them in managing their finances.
+	User Interaction/Steps:
+		1. The user will login and navigate to the homepage. 
+		2. The user will then navigate to the "Expense Report" button on the menu and click on it.
+		3. The user will fill out the form to generate an expense report by selecting the specific month they wish to receive a report for. 
+		4. The user will then press the "Generate Expense Report" button.
+
+	Description of test results:
+
+		- Pass: This test will pass if the user is presented with an expense report for the given month that they selected. The report will break down their monthly expenses
+		by category, how much was spent on each category, and compare it to their spendings for each category for the previous month. 
+
+		- Fail: This test will fail if the user enters the wrong month when trying to generate an expense report, or if there is a database error when generating the report. 
+		If there is a database error when generating the expense report, an approriate message will be displayed to the user. 
 

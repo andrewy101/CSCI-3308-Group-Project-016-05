@@ -8,10 +8,12 @@ Look at splitwise app, maybe consider including tesseract for the project.
 
 Everything looks good so far, plan work for the next week, use branches, keep in backlog until assigned to someone then move to todo, list things we are going to do next week.
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Meeting 2, 11/16/2023
 Modality: Zoom
 Duration: 15 minutes
+Scribed by: Patrick Hunt
 
 
 Decisions made: 

@@ -5,11 +5,12 @@ CREATE TABLE IF NOT EXISTS users(
 
 CREATE TABLE IF NOT EXISTS expenses(
     expense_id SERIAL PRIMARY KEY,
+    description VARCHAR(120) NOT NULL,
     username VARCHAR(50) NOT NULL,
     category VARCHAR(50) NOT NULL,
     amount FLOAT NOT NULL,
     date DATE,
-    FOREIGN KEY (username) REFERENCES users (username)
+    CONSTRAINT username FOREIGN KEY (username) references users(username)
 );
 
 CREATE TABLE IF NOT EXISTS default_categories(

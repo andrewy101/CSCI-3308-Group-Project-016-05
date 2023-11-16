@@ -37,7 +37,7 @@ describe('Login Input Validation', () => {
       .send({username:'username', password: 'password'})
       .end((err, res) => {
         expect(res).to.have.status(200);
-        expect(res.text).to.include('Homepage');
+        expect(res.text).to.include('Expense Overview');
         done();
       });
       
