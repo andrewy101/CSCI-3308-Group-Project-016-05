@@ -1,4 +1,4 @@
-Test Case 1: Login page
+Test Case 1: User login
 
 	Description of Test Data: The test data for this test case will include the user's username and password. Both of these are stored in the users table in the database. 
 	
