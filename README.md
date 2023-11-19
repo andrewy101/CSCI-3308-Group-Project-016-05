@@ -12,5 +12,3 @@ Technology Stack: PostgreSQL, Docker, NodeJS, ExpressJS
 Prerequisites to run the application:
 - Docker
 
-How to run the tests
-Link to the deployed application
