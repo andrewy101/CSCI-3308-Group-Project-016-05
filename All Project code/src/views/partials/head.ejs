@@ -6,64 +6,26 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
+    <title>CSCI 3308 Lab 9</title>
     <!-- TO-DO: Add the <link> tag to include bootstrap stylesheet -->
     <!-- Bootstrap CSS library -->
-    
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css"
         rel="stylesheet"
         integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT"
         crossorigin="anonymous"
     />
-    
-
     <!-- Bootstrap JS library -->
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
         crossorigin="anonymous"
     >
-
     </script>
-    
-    <script>
-      window.onload = function() {
-      
-      var chart = new CanvasJS.Chart("chartContainer", {
-        animationEnabled: true,
-        title: {
-          text: "Current Monthly Expenses"
-        },
-        data: [{
-          type: "pie",
-          startAngle: 240,
-          yValueFormatString: "##0.00\"%\"",
-          indexLabel: "{label} {y}",
-          options: {
-            layout: {
-              padding: -20
-            }
-          },
-          dataPoints: [
-            {y: 79.45, label: "Auto"},
-            {y: 7.31, label: "Entertainment"},
-            {y: 7.06, label: "Food"},
-            {y: 4.91, label: "School"},
-            {y: 1.26, label: "Other"}
-          ]
-        }]
-      });
-      chart.render();
-      
-      }
-      </script>
     <!-- Bootstrap icons library -->
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css"
     />
-    <link rel="stylesheet" href="/css/style.css"/>
-
-    
   </head>
   <body>

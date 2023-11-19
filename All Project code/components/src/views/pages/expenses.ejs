@@ -18,21 +18,8 @@
             </tr>
           </thead>
           <tbody>
-              <%let deleteButton = '<button type="submit" class="btn btn-outline-danger">Delete</button>';%>
-              <%let formAction = '/expenses/delete'%>
-
-              <%for (let i = 0; i < expenses.length; i++) {%>
-                  <tr id="<%=expenses[i].expense_id%>">
-                      <form action="<%-formAction%>" method="POST">
-                          <input type="hidden" name="expense_id" value="<%=expenses[i].expense_id%>"/>
-                          <td class="row-data"><%=expenses[i].description%></td>
-                          <td class="row-data"><%=expenses[i].date.toLocaleDateString()%></td>
-                          <td class="row-data"><%=expenses[i].category%></td>
-                          <td class="row-data">$<%=expenses[i].amount%></td>
-                          <td class="row-data"><%-deleteButton%></td>
-                      </form>
-                  </tr>
-              <%}%>
+            
+              
           </tbody>
         </table>
     </div>
