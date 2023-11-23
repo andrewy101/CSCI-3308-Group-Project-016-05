@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS receipts(
     category VARCHAR(50) NOT NULL,
     amount FLOAT NOT NULL,
     date DATE,
-    income bit,
+    income BIT,
     CONSTRAINT username FOREIGN KEY (username) references users(username)
 );
 

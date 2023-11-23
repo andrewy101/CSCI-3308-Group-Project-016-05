@@ -64,17 +64,83 @@ const user = {
 
 //Home endpoint
 app.get('/home', (req, res) => {
-  if (!req.session.user && !req.query.login) {
+  
+  //This will fail if they don't have a session but have login=true in the query, therefore granting access when they shouldn't have it
+  if (!(req.session.user && req.query.login)) {
     return res.render('pages/login', {
       message: 'Please login or make an account.',
       error: true
     });
   } 
-  
-  res.render('pages/home');
 
+  if(!req.query.month){
+    req.query.month = '2023-12'; //default to current month
+  }
+  const month = parseInt(req.query.month.substring(5));
+  const username = req.session.user.username;
+  
+ 
+  var totalForMonth = `SELECT SUM(amount) as monthlyTotal FROM receipts WHERE username = ${username} AND EXTRACT(MONTH FROM date) = ${month}`;
+  var totalsByCategory = `
+  SELECT 
+      receipts.category,
+      EXTRACT(MONTH FROM receipts.date) as curr_month,
+      SUM(receipts.amount) as total_receipt_amount,
+      COALESCE(budget_amount.amount, 0.0) as budget_amount,
+      COALESCE(SUM(receipts.amount) - LAG(SUM(receipts.amount)) OVER (ORDER BY EXTRACT(MONTH FROM receipts.date)), 0.0) as amount_saved
+  FROM 
+      receipts
+  LEFT JOIN 
+      (
+          SELECT 
+              budgets.category,
+              SUM(budgets.amount) as amount
+          FROM 
+              budgets
+          WHERE 
+              budgets.month = ${month}
+              AND budgets.username = '${username}'
+          GROUP BY 
+              budgets.category
+      ) budget_amount
+  ON 
+      receipts.category = budget_amount.category
+  WHERE 
+      EXTRACT(MONTH FROM receipts.date) = ${month}
+      AND receipts.username = '${username}'
+  GROUP BY 
+      receipts.category, EXTRACT(MONTH FROM receipts.date), budget_amount.amount;
+`;
+//add amount saved since month prior and fix test case
+
+  db.task('get-everything', task => {
+    return task.batch([task.any(totalsByCategory), task.any(totalForMonth)]);
+  })
+    .then(data => {
+      
+      res.render('pages/home', {
+        data,
+        
+      })
+    })
+    
+    .catch(err => {
+      console.log('Uh Oh spaghettio');
+      console.log(err);
+
+    });
 });
 
+app.post('/adjust_budget', (req, res) =>{
+
+  console.log(req.body.budgetAdjustment);
+  console.log(req.body.category);
+  console.log(req.body.month);
+  console.log(req.session.user.username);
+  //Redirect to home after updating table row
+
+
+});
 app.get('/report', (req, res) => {
   if (!req.session.user) {
     return res.render('pages/login', {
@@ -208,11 +274,9 @@ app.post('/login', async (req, res) => {
         })
       }
       else{
-        user.username = user_found.username;
 
+        user.username = user_found.username;
         req.session.user = user;
-        req.session.save();
-    
         res.redirect('/home?login=true');
       }
 
