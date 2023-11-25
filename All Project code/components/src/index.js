@@ -81,66 +81,104 @@ app.get('/home', (req, res) => {
   
  
   var totalForMonth = `SELECT SUM(amount) as monthlyTotal FROM receipts WHERE username = ${username} AND EXTRACT(MONTH FROM date) = ${month}`;
+
   var totalsByCategory = `
-  SELECT 
-      receipts.category,
-      EXTRACT(MONTH FROM receipts.date) as curr_month,
-      SUM(receipts.amount) as total_receipt_amount,
-      COALESCE(budget_amount.amount, 0.0) as budget_amount,
-      COALESCE(SUM(receipts.amount) - LAG(SUM(receipts.amount)) OVER (ORDER BY EXTRACT(MONTH FROM receipts.date)), 0.0) as amount_saved
-  FROM 
-      receipts
-  LEFT JOIN 
-      (
           SELECT 
-              budgets.category,
-              SUM(budgets.amount) as amount
+            receipts.category,
+            EXTRACT(MONTH FROM receipts.date) as curr_month,
+            SUM(receipts.amount) as total_amount_for_category,
+            COALESCE(budget_amount.amount, 0.0) as budget_amount,
+            COALESCE(prior_month.total_amount, 0.0) as total_amount_for_prior_month
           FROM 
-              budgets
+            receipts
+          LEFT JOIN 
+            (
+                SELECT 
+                    budgets.category,
+                    SUM(budgets.amount) as amount
+                FROM 
+                    budgets
+                WHERE 
+                    budgets.month = ${month}
+                    AND budgets.username = '${username}'
+                GROUP BY 
+                    budgets.category
+            ) budget_amount
+          ON 
+            receipts.category = budget_amount.category
+          LEFT JOIN
+            (
+                SELECT 
+                    category,
+                    SUM(amount) as total_amount
+                FROM 
+                    receipts
+                WHERE 
+                    EXTRACT(MONTH FROM date) = ${month} - 1
+                    AND username = '${username}'
+                GROUP BY 
+                    category
+            ) prior_month
+          ON 
+            receipts.category = prior_month.category
           WHERE 
-              budgets.month = ${month}
-              AND budgets.username = '${username}'
+            EXTRACT(MONTH FROM receipts.date) = ${month}
+            AND receipts.username = '${username}'
           GROUP BY 
-              budgets.category
-      ) budget_amount
-  ON 
-      receipts.category = budget_amount.category
-  WHERE 
-      EXTRACT(MONTH FROM receipts.date) = ${month}
-      AND receipts.username = '${username}'
-  GROUP BY 
-      receipts.category, EXTRACT(MONTH FROM receipts.date), budget_amount.amount;
-`;
-//add amount saved since month prior and fix test case
+            receipts.category, EXTRACT(MONTH FROM receipts.date), budget_amount.amount, prior_month.total_amount;
+
+          `;
 
   db.task('get-everything', task => {
     return task.batch([task.any(totalsByCategory), task.any(totalForMonth)]);
   })
     .then(data => {
       
-      res.render('pages/home', {
-        data,
-        
-      })
+      if(data[1][0].monthlytotal === 0 || data[1][0].monthlytotal === null){
+        res.redirect('/home?login=true&month=2023-12&error=true');
+      }
+      else if (req.query.error){
+        res.render('pages/home', {
+          data,
+          message: "No expenses yet for selected month!",
+          error: true
+          
+        })
+      }
+      else{
+        res.render('pages/home', {
+          data
+          
+        })
+      }
+      
     })
     
     .catch(err => {
-      console.log('Uh Oh spaghettio');
+      console.log('SQL ERROR');
       console.log(err);
 
     });
 });
 
-app.post('/adjust_budget', (req, res) =>{
+app.post('/adjust_budget', (req, res) =>{ 
 
-  console.log(req.body.budgetAdjustment);
-  console.log(req.body.category);
-  console.log(req.body.month);
-  console.log(req.session.user.username);
-  //Redirect to home after updating table row
+  var adjust_budget_query = `
+  INSERT INTO budgets (username, month, amount, category) VALUES ($1, $2, $3, $4)
+  ON CONFLICT (month, category)
+  DO UPDATE SET amount = $3`;
 
+  db.result(adjust_budget_query, [req.session.user.username, req.body.month, req.body.budgetAdjustment, req.body.category])
+
+    .then(() => {
+      res.redirect(`/home?login=true&month=2023-${req.body.month}`);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
 });
+
 app.get('/report', (req, res) => {
   if (!req.session.user) {
     return res.render('pages/login', {

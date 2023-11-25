@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS budgets(
     month INTEGER NOT NULL,
     amount FLOAT NOT NULL,
     category VARCHAR(50) NOT NULL,
-    CONSTRAINT username FOREIGN KEY (username) references users(username)
+    CONSTRAINT username FOREIGN KEY (username) references users(username),
+    CONSTRAINT unique_month_category_combination UNIQUE (month, category)
 
 );

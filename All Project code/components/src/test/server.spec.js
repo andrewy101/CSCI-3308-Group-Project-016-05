@@ -27,7 +27,7 @@ describe('Server!', () => {
   // ===========================================================================
   // TO-DO: Part A Login unit test case
 
-/*describe('Login Input Validation', () => {
+describe('Login Input Validation', () => {
 
 
   it('positive : /login', done => {
@@ -37,7 +37,7 @@ describe('Server!', () => {
       .send({username:'username', password: 'password'})
       .end((err, res) => {
         expect(res).to.have.status(200);
-        expect(res.text).to.include('Categories');
+        expect(res.text).to.contain("Welcome to BudgetBeam!");
         done();
       });
       
@@ -56,7 +56,7 @@ describe('Server!', () => {
         });
     });
 
-  })*/
+  })
 
 
  

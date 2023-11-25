@@ -7,7 +7,7 @@
 
 
   <div class="col"><%- include ('../partials/message') %></div>
-
+  
   <script>
     
     var month = "<%= data[0][0].curr_month %>";
@@ -33,7 +33,7 @@
     
 
     "<%for(let i = 0; i < data[0].length; ++i){%>"
-      var operation = (parseInt("<%=data[0][i].total_receipt_amount%>") / parseInt("<%=data[1][0].monthlytotal%>")) * 100;
+      var operation = (parseInt("<%=data[0][i].total_amount_for_category%>") / parseInt("<%=data[1][0].monthlytotal%>")) * 100;
       chartData.push({y: operation, label: "<%=data[0][i].category%>"});
     "<%}%>"
     
@@ -98,27 +98,27 @@
                     <li class="list-group-item d-flex justify-content-between align-items-start">
                       <div class="ms-2 me-auto">
                         <div class="fw-bold">Total Spendings for Month</div>
-                        $<%= category.total_receipt_amount.toFixed(2) %>
+                        $<%= category.total_amount_for_category.toFixed(2) %>
                       </div>
                     
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-start">
                       <div class="ms-2 me-auto">
                         <div class="fw-bold">Amount Saved Since Prior Month</div>
-                          $<%=category.amount_saved.toFixed(2)%>
+                          $<%=(category.total_amount_for_prior_month - category.total_amount_for_category).toFixed(2)%>
                       </div>
     
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-start">
                       <div class="ms-2 me-auto">
                         <div class="fw-bold">Budget Status</div>
-                        <% if (category.total_receipt_amount > category.budget_amount){%>
+                        <% if (category.total_amount_for_category > category.budget_amount){%>
                           
-                          Over Budget by $<%=(category.total_receipt_amount - category.budget_amount).toFixed(2)%>
+                          Over Budget by $<%=(category.total_amount_for_category - category.budget_amount).toFixed(2)%>
                           
                         <%} else{%>
                           
-                          Under Budget by $<%= (category.budget_amount - category.total_receipt_amount).toFixed(2)%>
+                          Under Budget by $<%= (category.budget_amount - category.total_amount_for_category).toFixed(2)%>
                           
                         <%}%>
                     </div>
