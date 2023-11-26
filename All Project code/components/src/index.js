@@ -64,14 +64,118 @@ const user = {
 
 //Home endpoint
 app.get('/home', (req, res) => {
-  if (!req.session.user && !req.query.login) {
+  
+  //This will fail if they don't have a session but have login=true in the query, therefore granting access when they shouldn't have it
+  if (!(req.session.user && req.query.login)) {
     return res.render('pages/login', {
       message: 'Please login or make an account.',
       error: true
     });
   } 
+
+  if(!req.query.month){
+    req.query.month = '2023-12'; //default to current month
+  }
+  const month = parseInt(req.query.month.substring(5));
+  const username = req.session.user.username;
   
-  res.render('pages/home');
+ 
+  var totalForMonth = `SELECT SUM(amount) as monthlyTotal FROM receipts WHERE username = ${username} AND EXTRACT(MONTH FROM date) = ${month}`;
+
+  var totalsByCategory = `
+          SELECT 
+            receipts.category,
+            EXTRACT(MONTH FROM receipts.date) as curr_month,
+            SUM(receipts.amount) as total_amount_for_category,
+            COALESCE(budget_amount.amount, 0.0) as budget_amount,
+            COALESCE(prior_month.total_amount, 0.0) as total_amount_for_prior_month
+          FROM 
+            receipts
+          LEFT JOIN 
+            (
+                SELECT 
+                    budgets.category,
+                    SUM(budgets.amount) as amount
+                FROM 
+                    budgets
+                WHERE 
+                    budgets.month = ${month}
+                    AND budgets.username = '${username}'
+                GROUP BY 
+                    budgets.category
+            ) budget_amount
+          ON 
+            receipts.category = budget_amount.category
+          LEFT JOIN
+            (
+                SELECT 
+                    category,
+                    SUM(amount) as total_amount
+                FROM 
+                    receipts
+                WHERE 
+                    EXTRACT(MONTH FROM date) = ${month} - 1
+                    AND username = '${username}'
+                GROUP BY 
+                    category
+            ) prior_month
+          ON 
+            receipts.category = prior_month.category
+          WHERE 
+            EXTRACT(MONTH FROM receipts.date) = ${month}
+            AND receipts.username = '${username}'
+          GROUP BY 
+            receipts.category, EXTRACT(MONTH FROM receipts.date), budget_amount.amount, prior_month.total_amount;
+
+          `;
+
+  db.task('get-everything', task => {
+    return task.batch([task.any(totalsByCategory), task.any(totalForMonth)]);
+  })
+    .then(data => {
+      
+      if(data[1][0].monthlytotal === 0 || data[1][0].monthlytotal === null){
+        res.redirect('/home?login=true&month=2023-12&error=true');
+      }
+      else if (req.query.error){
+        res.render('pages/home', {
+          data,
+          message: "No expenses yet for selected month!",
+          error: true
+          
+        })
+      }
+      else{
+        res.render('pages/home', {
+          data
+          
+        })
+      }
+      
+    })
+    
+    .catch(err => {
+      console.log('SQL ERROR');
+      console.log(err);
+
+    });
+});
+
+app.post('/adjust_budget', (req, res) =>{ 
+
+  var adjust_budget_query = `
+  INSERT INTO budgets (username, month, amount, category) VALUES ($1, $2, $3, $4)
+  ON CONFLICT (month, category)
+  DO UPDATE SET amount = $3`;
+
+  db.result(adjust_budget_query, [req.session.user.username, req.body.month, req.body.budgetAdjustment, req.body.category])
+
+    .then(() => {
+      res.redirect(`/home?login=true&month=2023-${req.body.month}`);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
 });
 
@@ -208,11 +312,9 @@ app.post('/login', async (req, res) => {
         })
       }
       else{
-        user.username = user_found.username;
 
+        user.username = user_found.username;
         req.session.user = user;
-        req.session.save();
-    
         res.redirect('/home?login=true');
       }
 
