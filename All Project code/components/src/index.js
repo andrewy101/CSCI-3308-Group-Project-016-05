@@ -80,13 +80,20 @@ app.get('/home', (req, res) => {
   const username = req.session.user.username;
   
  
-  var totalForMonth = `SELECT SUM(amount) as monthlyTotal FROM receipts WHERE username = ${username} AND EXTRACT(MONTH FROM date) = ${month}`;
+  var totalForMonth = `
+  SELECT 
+    SUM(CASE WHEN income = '0' THEN amount ELSE 0 END) as monthlyTotalSpendings,
+    SUM(CASE WHEN income = '1' THEN amount ELSE 0 END) as monthlyTotalIncome
+  FROM receipts 
+  WHERE username = ${username} 
+  AND EXTRACT(MONTH FROM date) = ${month};`;
 
   var totalsByCategory = `
           SELECT 
             receipts.category,
             EXTRACT(MONTH FROM receipts.date) as curr_month,
-            SUM(receipts.amount) as total_amount_for_category,
+            SUM(CASE WHEN income = '0' THEN receipts.amount ELSE 0 END) as total_amount_for_category,
+            SUM(CASE WHEN income = '1' THEN receipts.amount ELSE 0 END) as total_income_for_category,
             COALESCE(budget_amount.amount, 0.0) as budget_amount,
             COALESCE(prior_month.total_amount, 0.0) as total_amount_for_prior_month
           FROM 
@@ -114,7 +121,7 @@ app.get('/home', (req, res) => {
                 FROM 
                     receipts
                 WHERE 
-                    EXTRACT(MONTH FROM date) = ${month} - 1
+                    EXTRACT(MONTH FROM date) = ${month - 1}
                     AND username = '${username}'
                 GROUP BY 
                     category
@@ -134,7 +141,7 @@ app.get('/home', (req, res) => {
   })
     .then(data => {
       
-      if(data[1][0].monthlytotal === 0 || data[1][0].monthlytotal === null){
+      if(data[1][0].monthlytotalspendings === 0 || data[1][0].monthlytotalspendings === null){
         res.redirect('/home?login=true&month=2023-12&error=true');
       }
       else if (req.query.error){
@@ -148,10 +155,8 @@ app.get('/home', (req, res) => {
       else{
         res.render('pages/home', {
           data
-          
         })
-      }
-      
+      }  
     })
     
     .catch(err => {

@@ -16,6 +16,10 @@ body {
 }
 #accordTitle{
     margin-bottom:20px;
+    margin-top:20px;
+}
+#totalsTitle{
+    margin-bottom:20px;
 }
 #homepageContainer{
     padding-top:20px;
