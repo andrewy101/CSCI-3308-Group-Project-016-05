@@ -1,18 +1,75 @@
-#chartContainer {
-    width: 50%;
-    float: left;
-}
-
-#expenseDisplay {
+body {
+    min-height: 400px;
+    margin-bottom: 100px;
+    clear: both;
+ }
+ #expenseDisplay {
     width: 50%;
     float: right;
     padding: 20px;
+}
+#loginContainer {
+    text-align:center;
+}
+#welcomeTitle, #loginTitle, #registerHyperlink, #usernameInput{
+    margin-top:40px;
+}
+#passwordInput{
+    margin-top:20px;
+}
+#loginForm{
+    width:500px;
+    margin: 0 auto;
+}
+#registerContainer{
+    text-align:center;
+}
+#registerForm{
+    width:500px;
+    margin: 0 auto;
+}
+#registerWelcomeTitle, #registerTitle, #loginHyperlink, #regUnameInput{
+    margin-top:40px;
+}
+#regPasswordInput{
+    margin-top:20px;
 }
 
 .clearfix::after {
     content: "";
     clear: both;
     display: table;
+}
+
+#month_form{
+    margin-top:450px;
+}
+#monthInput{
+    width:400px; 
+    margin-top:20px;
+}
+#homeTitle{
+    text-align:center;
+}
+#accordTitle{
+    margin-bottom:20px;
+    margin-top:20px;
+}
+#totalsTitle{
+    margin-bottom:20px;
+}
+#homepageContainer{
+    padding-top:20px;
+}
+#accordionContainer{
+     
+    display: flex;
+    justify-content: center;
+    align-items: center;
+      
+}
+#accordionExample{
+    width:80%;
 }
 
 #menu_bar, #budget_footer{

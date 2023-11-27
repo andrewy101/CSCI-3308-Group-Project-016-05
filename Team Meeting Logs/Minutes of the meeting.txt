@@ -1,6 +1,7 @@
 Meeting 1, 11/09/2023:
 Modality: Zoom
 Duration: 15 minutes
+Scribed by: Michael Thomas
 
 Progress: Finished document for lab 10, finished use case diagram, set up code skeleton, set up project board, decided on final app idea, allocated workload for the week.
 New expense page: We plan on users being able to assign categories to each expense and income. TA says everything looks good.
@@ -8,16 +9,40 @@ Look at splitwise app, maybe consider including tesseract for the project.
 
 Everything looks good so far, plan work for the next week, use branches, keep in backlog until assigned to someone then move to todo, list things we are going to do next week.
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Meeting 2, 11/16/2023
 Modality: Zoom
 Duration: 15 minutes
+Scribed by: Patrick Hunt
 
+Overview:
+
+    - Showed the TA our progress since last week, including the functionality for the login and registration page, as well as the homepage and the expense page, and discussed
+    plans for next week. 
+    - We went over the project board, the TA instructed us to make sure that we are adding tasks to the backlog.
+    - Discussed several options to improve our design (listed below)
 
 Decisions made: 
 
+    - We finalized our decision to use the expense categories in the database, as opposed to using them in local storage. There was some disagreement about this but we 
+    came to a consensus. 
+    - We will get rid of of the database table with the custom categories, and only have one database table for expense categories. This way, we can start by inserting default
+    categories, and then when the user adds and further categories, they will be added to this table. This table will utilize the 'username' field in the users table as a 
+    foreign key to make sure that the categories are appropriately matched to each user who added them. 
+
 Alternative actions/options discussed:
 
+    - We discussed a way to make the expense categories less broad with the TA, and discussed potentially amalgamating all of the expense data into one, as suggested by the TA,
+    similar to a receipt from the grocery store. This would contain all of the individual items purchased in the trip to the grocery store, instead of having broad expenses listed.
+    - The TA recommended that for our homepage, the user should be able to click on an individual category and see all of the expenses for that category, instead of having
+    them all displayed at once. This could be done using a dropdown. 
+    - We discussed the need to focus on features that will make our Web Application unique apart from the labs we have done. 
+
 Follow-up items, including agreed-on roles and responsibilities:
+    - Andrew will be working on the expense page
+    - Patrick will be working on the homepage
+    - Michael will be working on the page that generates a report
+    - Julie will be working on the profile page
 
-
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

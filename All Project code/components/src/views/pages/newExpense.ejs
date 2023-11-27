@@ -1,0 +1,81 @@
+<%- include ('../partials/head') %>
+<%- include ('../partials/menu') %>
+<script src="/js/newExpense.js"></script>
+
+<main>
+    <div class="col"><%- include ('../partials/message') %></div>
+    <div class="container col-md-5 col-md-offset-5">
+      <h5 style="margin-top:5%; text-align:center">New Receipt</h5>
+      <form id="form-fields">
+        <!-- Is income? -->
+        <div class="form-check form-check-inline">
+          <input id="isIncome" class="form-check-input" type="checkbox" value="option1" onchange="checkBox(this)">
+          <label class="form-check-label" for="isIncome">Income</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input id="isExpense" class="form-check-input" type="checkbox" value="option2" onchange="checkBox(this)" checked>
+          <label class="form-check-label" for="isExpense">Expense</label>
+        </div>
+        <!-- Date -->
+        <div class="row mb-3">
+          <label class="col-sm-2 form-label">Date</label>
+          <div class="col-sm-10">
+            <input type="date" id="date" class="form-control" pattern=""/>
+          </div>
+        </div>
+        <!-- Category -->
+        <div class="row mb-3">
+          <label class="col-sm-2 form-label">Category</label>
+          <div class="col-sm-10">
+            <select id="category" class="form-control" onchange="updateCategoryField(this.value)">
+                <% for (let i = 0; i < categories.length; i++) { %>
+                  <option value=<%=categories[i].category%>><%=categories[i].category%></option>
+                <% } %>
+                <option value="Create new category">Create new category</option>
+            </select>
+          </div>
+        </div>
+        <!-- Hidden category field -->
+        <div id = "new-category" class="row mb-3" hidden="true">
+          <label class="col-sm-2 form-label"></label>
+          <div class="col-sm-10">
+            <input type="text" id="new-category-field" class="form-control" pattern="(?:New Category)" placeholder="Enter new category">
+          </div>
+        </div>
+        <!-- Description -->
+        <div class="row mb-3">
+          <label class="col-sm-2 form-label">Description</label>
+          <div class="col-sm-10">
+            <input type="text" id="description" class="form-control" pattern=""/>
+          </div>
+        </div>
+        <!-- Line items -->
+        <div id="line-items">
+          <div class="row mb-3">
+            <label class="col-sm-2 form-label">New Line Item</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" placeholder="Enter name">
+              <input type="number" class="form-control" placeholder="Enter amount"/>
+              <!--<button type="button" class="btn btn-outline-danger float-end" onclick='deleteLineItem(this.parentElement.parentElement)'>X</button>-->
+            </div>
+          </div>
+        </div>
+        <!-- Add new line item -->
+        <div class="row mb-3">
+          <button type="button" class="btn btn-outline-success" onclick='addLineItem()'>Add Line Item</button>
+        </div>
+        <!-- Modal buttons -->
+        <div class="row-mb-3" style="margin-bottom:50%">
+          <button id="submit-button" type="button" class="btn btn-primary float-end" onclick="createReceipt()">Create</button>
+        </div>
+      </form>
+    </div>
+</main>
+
+<script>
+  const dateField = document.getElementById('date');
+  const now = new Date();
+  dateField.defaultValue = now.toISOString().substr(0, 10);
+</script>
+
+<%- include ('../partials/footer') %>

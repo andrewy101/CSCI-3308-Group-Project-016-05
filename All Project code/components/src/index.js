@@ -51,21 +51,239 @@ app.use(
 );
 app.use(express.static(path.join(__dirname, 'resources')));
 
+app.get('/', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+  res.redirect('/home');
+});
+
+const user = {
+  username: undefined
+}
+// Display expense table
+app.get('/expenses', (req, res) => {
+  if (!req.session.user) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  }
+  db.any(`SELECT * FROM receipts WHERE username = $1 ORDER BY date DESC;`, [req.session.user.username])
+  .then(receipts => {
+    res.render('pages/expenses', {
+      receipts
+    });
+  });
+});
+
+// New receipt page
+app.get('/expenses/new', (req, res) => {
+  if (!req.session.user) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  }  
+  const categories = db.any(`SELECT * FROM categories WHERE username IS NULL OR username = $1;`, [req.session.user.username])
+  .then(categories => {
+    res.render('pages/newExpense', {
+      categories
+    });
+  });
+});
+
+//Create new receipt
+app.post('/expenses/new', (req, res) => {
+  if (!req.session.user) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  }  
+  db.tx(async t => {
+    const receipt = await t.any(`INSERT INTO receipts (username, income, date, category, description, amount) values($1, $2, $3, $4, $5, $6) RETURNING *;`, 
+    [req.session.user.username, req.body.income, req.body.date, req.body.category, req.body.description, req.body.amount]);
+
+    for (let i = 0; i < req.body.lineItems.length; i++) {
+      await t.none(`INSERT INTO items (receipt_id, name, amount) values($1, $2, $3);`, 
+      [receipt[0].receipt_id, req.body.lineItems[i].name, req.body.lineItems[i].amount]);
+    }
+
+    res.sendStatus(200);
+  });
+
+  db.one(`SELECT category FROM categories WHERE (username = $1 OR username IS NULL) AND category = $2`,
+  [req.session.user.username, req.body.category])
+  .catch(err => {
+    db.none(`INSERT INTO categories (username, category) values($1, $2);`, 
+    [req.session.user.username, req.body.category]);
+  });
+}); 
+
+// Delete expense rows
+app.post('/expenses/delete', (req, res) => {
+  if (req.session.user) {
+    db.tx(async t => {
+      for (let i = 0; i < req.body.receipt_ids.length; i++) {
+        const receipt_id = parseInt(req.body.receipt_ids[i]);
+        await t.none(`DELETE from receipts WHERE receipt_id = $1;`, [receipt_id]);
+      }
+      res.sendStatus(200);
+    });
+  }
+});
+
+app.get('/expenses/info', (req, res) => {
+  db.any(`SELECT * FROM items WHERE receipt_id = $1`, [req.query.id])
+  .then(items => {
+    res.json({
+      items
+    });
+  });
+});
 //Home endpoint
 app.get('/home', (req, res) => {
-  res.render('pages/home');
+  
+  //This will fail if they don't have a session but have login=true in the query, therefore granting access when they shouldn't have it
+  if (!(req.session.user && req.query.login)) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  } 
+
+  if(!req.query.month){
+    req.query.month = '2023-12'; //default to current month
+  }
+  const month = parseInt(req.query.month.substring(5));
+  const username = req.session.user.username;
+  
+ 
+  var totalForMonth = `
+  SELECT 
+    SUM(CASE WHEN income = false THEN amount ELSE 0 END) as monthlyTotalSpendings,
+    SUM(CASE WHEN income = true THEN amount ELSE 0 END) as monthlyTotalIncome
+  FROM receipts 
+  WHERE username = ${username} 
+  AND EXTRACT(MONTH FROM date) = ${month};`;
+
+  var totalsByCategory = `
+          SELECT 
+            receipts.category,
+            EXTRACT(MONTH FROM receipts.date) as curr_month,
+            SUM(CASE WHEN income = false THEN receipts.amount ELSE 0 END) as total_amount_for_category,
+            SUM(CASE WHEN income = true THEN receipts.amount ELSE 0 END) as total_income_for_category,
+            COALESCE(budget_amount.amount, 0.0) as budget_amount,
+            COALESCE(prior_month.total_amount, 0.0) as total_amount_for_prior_month
+          FROM 
+            receipts
+          LEFT JOIN 
+            (
+                SELECT 
+                    budgets.category,
+                    SUM(budgets.amount) as amount
+                FROM 
+                    budgets
+                WHERE 
+                    budgets.month = ${month}
+                    AND budgets.username = '${username}'
+                GROUP BY 
+                    budgets.category
+            ) budget_amount
+          ON 
+            receipts.category = budget_amount.category
+          LEFT JOIN
+            (
+                SELECT 
+                    category,
+                    SUM(amount) as total_amount
+                FROM 
+                    receipts
+                WHERE 
+                    EXTRACT(MONTH FROM date) = ${month - 1}
+                    AND username = '${username}'
+                GROUP BY 
+                    category
+            ) prior_month
+          ON 
+            receipts.category = prior_month.category
+          WHERE 
+            EXTRACT(MONTH FROM receipts.date) = ${month}
+            AND receipts.username = '${username}'
+          GROUP BY 
+            receipts.category, EXTRACT(MONTH FROM receipts.date), budget_amount.amount, prior_month.total_amount;
+
+          `;
+
+  db.task('get-everything', task => {
+    return task.batch([task.any(totalsByCategory), task.any(totalForMonth)]);
+  })
+    .then(data => {
+      
+      if(data[1][0].monthlytotalspendings === 0 || data[1][0].monthlytotalspendings === null){
+        res.redirect('/home?login=true&month=2023-12&error=true');
+      }
+      else if (req.query.error){
+        res.render('pages/home', {
+          data,
+          message: "No expenses yet for selected month!",
+          error: true
+          
+        })
+      }
+      else{
+        res.render('pages/home', {
+          data
+        })
+      }  
+    })
+    
+    .catch(err => {
+      console.log('SQL ERROR');
+      console.log(err);
+
+    });
+});
+
+app.post('/adjust_budget', (req, res) =>{ 
+
+  var adjust_budget_query = `
+  INSERT INTO budgets (username, month, amount, category) VALUES ($1, $2, $3, $4)
+  ON CONFLICT (month, category)
+  DO UPDATE SET amount = $3`;
+
+  db.result(adjust_budget_query, [req.session.user.username, req.body.month, req.body.budgetAdjustment, req.body.category])
+
+    .then(() => {
+      res.redirect(`/home?login=true&month=2023-${req.body.month}`);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
 });
 
 app.get('/report', (req, res) => {
+  if (!req.session.user) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  } 
   res.render('pages/report');
 });
 
 app.get('/profile', (req, res) => {
+  if (!req.session.user) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  } 
   res.render('pages/profile');
 });
-app.get('/expenses', (req, res) => {
-  res.render('pages/expenses');
-});
+
 //Welcome endpoint
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
@@ -87,12 +305,22 @@ app.get('/logout', (req, res) => {
 
 //Register (get)
 app.get('/register', (req, res) => {
+  if (req.session.user) {
+    req.session.destroy();
+  }
   res.render('pages/register');
 });
 
 
 //Register endpoint (POST)
 app.post('/register', async (req, res) => {
+  // Can't have blank username or password
+  if (req.body.username === '' || req.body.password === '') {
+    return res.render('pages/register', {
+      message: 'Fields cannot be blank.',
+      error: true
+    })
+  }
   //hash the password using bcrypt library
   const hash = await bcrypt.hash(req.body.password, 10);
   // To-DO: Insert username and hashed password into the 'users' table
@@ -104,7 +332,6 @@ app.post('/register', async (req, res) => {
       const query = `insert into users (username, password) values($1, $2)`
       const insertQuery = await db.any(query, [req.body.username, hash]);
       res.redirect('/login');
-
     }
     catch{
       res.render('pages/register', {
@@ -120,21 +347,22 @@ app.post('/register', async (req, res) => {
 
 //Login (post)
 app.post('/login', async (req, res) => {
-
   try{
     userQuery = `select * from users where username = $1`;
     const find_user = await db.any(userQuery, [req.body.username]);
 
     
     if(find_user.length == 0){
-      res.redirect('/register');
-   
+      res.render('pages/login', {
+        message: 'User not found.',
+        error: true
+      });
     }
  
     else{
       // check if password from request matches with password in DB
-      const user = find_user[0];
-      const match = await bcrypt.compare(req.body.password, user.password);
+      const user_found = find_user[0];
+      const match = await bcrypt.compare(req.body.password, user_found.password);
       if(!match){
         res.render('pages/login', {
           message: "Incorrect username or password.",
@@ -142,10 +370,10 @@ app.post('/login', async (req, res) => {
         })
       }
       else{
+
+        user.username = user_found.username;
         req.session.user = user;
-        req.session.save();
-    
-        res.redirect('/home');
+        res.redirect('/home?login=true');
       }
 
     }
@@ -160,6 +388,5 @@ app.post('/login', async (req, res) => {
   
   
 });
-
 
 module.exports = app.listen(3000);

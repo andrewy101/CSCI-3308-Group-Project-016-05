@@ -6,3 +6,9 @@ BudgetBeam is a web application that allows users to track their monthly expense
 
 Contributors:
 Andrew Yang, Patrick Hunt, Michael Thomas, Julie Huang
+
+Technology Stack: PostgreSQL, Docker, NodeJS, ExpressJS
+
+Prerequisites to run the application:
+- Docker
+

@@ -1,16 +1,88 @@
 <%- include ('../partials/head') %>
 <%- include ('../partials/menu') %>
+<script src="/js/expenses.js"></script>
+
 <main>
+    <!-- EVENT MODAL -->
+    <div id="event-modal" class="modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 id="modal-date"></h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+            <div class="modal-body">
+              <!-- Table -->
+              <table class="table">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="modal-rows">
+                </tbody>
+              </table>
+              <div class="modal-footer">
+                <h4>Total: <a id="modal-total"></a></h4>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
 
-
+    <!-- Main code -->  
     <div class="col"><%- include ('../partials/message') %></div>
     <div class="container">
-  
-        <h4 class="display-4">Expenses</h4>
-      
-    </div>
-    </div>
-  </main>
+        <!-- Start of page -->
+        <h4 class="display-4">Receipts</h4>
 
+        <!-- Buttons on top -->
+        <div id="header-buttons" class = "float-end">
+          <a href="/expenses/new"><button type="button" class="btn btn-outline-primary">Add Receipt</button></a>
+        </div>
+
+        <table class="table" style="margin-bottom:5%">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Category</th>
+              <th scope="col">Description</th>
+              <th scope="col">Total</th>
+              <th scope="col">
+                <i id="delete-button" class="bi bi-trash" style="cursor:pointer;color:red" onclick="deleteRows()" hidden></i>
+              </th>
+              <th scope="col">
+                <input class="form-check-input" type="checkbox" onchange="checkAll(this)">
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <%for (let i = 0; i < receipts.length; i++) {%>
+              <tr id="<%=receipts[i].receipt_id%>">
+                  <form>
+                      <td class="row-data"><%=receipts[i].date.toLocaleDateString()%></td>
+                      <td class="row-data"><%=receipts[i].category%></td>
+                      <td class="row-data"><%=receipts[i].description%></td>
+                      <td class="row-data" style=<%=receipts[i].income  ? 'color:green' : 'color:red'%>>$<%=receipts[i].amount.toFixed(2)%></td>
+                      <td class="row-data">
+                        <i class="bi bi-info-circle" style="cursor:pointer" onclick="requestInfo(this)"></i>
+                      </td>
+                      <td class="row-data"> 
+                          <input idx=<%=i%> class="form-check-input individual-check-box" type="checkbox" onchange="checkBoxHandler(this)">         
+                      </td>
+                  </form>
+              </tr>
+          <%}%>
+          </tbody>
+        </table>
+    </div>
+    </div>
+</main>
+
+<script>
+  var EVENT_MODAL = new bootstrap.Modal(document.getElementById('event-modal'));
+  var checkedRows = [];
+</script>
 
 <%- include ('../partials/footer') %>
