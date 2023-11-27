@@ -61,7 +61,87 @@ app.get('/', (req, res) => {
 const user = {
   username: undefined
 }
+// Display expense table
+app.get('/expenses', (req, res) => {
+  if (!req.session.user) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  }
+  db.any(`SELECT * FROM receipts WHERE username = $1 ORDER BY date DESC;`, [req.session.user.username])
+  .then(receipts => {
+    res.render('pages/expenses', {
+      receipts
+    });
+  });
+});
 
+// New receipt page
+app.get('/expenses/new', (req, res) => {
+  if (!req.session.user) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  }  
+  const categories = db.any(`SELECT * FROM categories WHERE username IS NULL OR username = $1;`, [req.session.user.username])
+  .then(categories => {
+    res.render('pages/newExpense', {
+      categories
+    });
+  });
+});
+
+//Create new receipt
+app.post('/expenses/new', (req, res) => {
+  if (!req.session.user) {
+    return res.render('pages/login', {
+      message: 'Please login or make an account.',
+      error: true
+    });
+  }  
+  db.tx(async t => {
+    const receipt = await t.any(`INSERT INTO receipts (username, income, date, category, description, amount) values($1, $2, $3, $4, $5, $6) RETURNING *;`, 
+    [req.session.user.username, req.body.income, req.body.date, req.body.category, req.body.description, req.body.amount]);
+
+    for (let i = 0; i < req.body.lineItems.length; i++) {
+      await t.none(`INSERT INTO items (receipt_id, name, amount) values($1, $2, $3);`, 
+      [receipt[0].receipt_id, req.body.lineItems[i].name, req.body.lineItems[i].amount]);
+    }
+
+    res.sendStatus(200);
+  });
+
+  db.one(`SELECT category FROM categories WHERE (username = $1 OR username IS NULL) AND category = $2`,
+  [req.session.user.username, req.body.category])
+  .catch(err => {
+    db.none(`INSERT INTO categories (username, category) values($1, $2);`, 
+    [req.session.user.username, req.body.category]);
+  });
+}); 
+
+// Delete expense rows
+app.post('/expenses/delete', (req, res) => {
+  if (req.session.user) {
+    db.tx(async t => {
+      for (let i = 0; i < req.body.receipt_ids.length; i++) {
+        const receipt_id = parseInt(req.body.receipt_ids[i]);
+        await t.none(`DELETE from receipts WHERE receipt_id = $1;`, [receipt_id]);
+      }
+      res.sendStatus(200);
+    });
+  }
+});
+
+app.get('/expenses/info', (req, res) => {
+  db.any(`SELECT * FROM items WHERE receipt_id = $1`, [req.query.id])
+  .then(items => {
+    res.json({
+      items
+    });
+  });
+});
 //Home endpoint
 app.get('/home', (req, res) => {
   
@@ -82,8 +162,8 @@ app.get('/home', (req, res) => {
  
   var totalForMonth = `
   SELECT 
-    SUM(CASE WHEN income = '0' THEN amount ELSE 0 END) as monthlyTotalSpendings,
-    SUM(CASE WHEN income = '1' THEN amount ELSE 0 END) as monthlyTotalIncome
+    SUM(CASE WHEN income = false THEN amount ELSE 0 END) as monthlyTotalSpendings,
+    SUM(CASE WHEN income = true THEN amount ELSE 0 END) as monthlyTotalIncome
   FROM receipts 
   WHERE username = ${username} 
   AND EXTRACT(MONTH FROM date) = ${month};`;
@@ -92,8 +172,8 @@ app.get('/home', (req, res) => {
           SELECT 
             receipts.category,
             EXTRACT(MONTH FROM receipts.date) as curr_month,
-            SUM(CASE WHEN income = '0' THEN receipts.amount ELSE 0 END) as total_amount_for_category,
-            SUM(CASE WHEN income = '1' THEN receipts.amount ELSE 0 END) as total_income_for_category,
+            SUM(CASE WHEN income = false THEN receipts.amount ELSE 0 END) as total_amount_for_category,
+            SUM(CASE WHEN income = true THEN receipts.amount ELSE 0 END) as total_income_for_category,
             COALESCE(budget_amount.amount, 0.0) as budget_amount,
             COALESCE(prior_month.total_amount, 0.0) as total_amount_for_prior_month
           FROM 
@@ -202,33 +282,6 @@ app.get('/profile', (req, res) => {
     });
   } 
   res.render('pages/profile');
-});
-
-// Display expense table
-app.get('/expenses', (req, res) => {
-  if (!req.session.user) {
-    return res.render('pages/login', {
-      message: 'Please login or make an account.',
-      error: true
-    });
-  }  
-  db.any(`SELECT * FROM expenses WHERE username = $1
-          ORDER BY date DESC;`, [req.session.user.username])
-  .then(expenses => {
-    res.render('pages/expenses', {
-      expenses
-    });
-  });
-});
-
-// Delete expense rows
-app.post('/expenses/delete', (req, res) => {
-  if (req.session.user) {
-    db.tx(async t => {
-      await t.none(`DELETE from expenses WHERE expense_id = $1;`, [parseInt(req.body.expense_id)]);
-      res.redirect('/expenses');
-    });
-  }
 });
 
 //Welcome endpoint
