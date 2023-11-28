@@ -1,16 +1,65 @@
 <%- include ('../partials/head') %>
 <%- include ('../partials/menu') %>
 <main>
-
-
     <div class="col"><%- include ('../partials/message') %></div>
     <div class="container">
-  
-        <h4 class="display-4">My Profile</h4>
-      
-    </div>
-    </div>
-  </main>
+        <h4 class="display-4">Profile Settings</h4>
 
+        <!-- Edit Profile Form -->
+        <form action="/profile/settings/photo" method="POST" enctype="multipart/form-data">
+            <!-- Profile picture upload -->
+            <label for="profilePicture">Edit Profile Picture:</label>
+            <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
+
+            <!-- Submit button for profile photo -->
+            <button type="submit">Save Profile Photo</button>
+        </form>
+
+        <!-- Add space between forms -->
+        <div style="margin-top: 20px;"></div>
+
+        <!-- Change Username and Password Form -->
+        <form action="/profile/settings" method="POST" enctype="multipart/form-data">
+            <!-- Username change input -->
+            <label for="newUsername">Change Username:</label>
+            <input type="text" id="newUsername" name="newUsername" required>
+
+            <!-- Password change -->
+            <label for="newPassword">Change Password:</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+
+
+
+            <!-- Add space between forms -->
+            <div style="margin-top: 20px;"></div>
+
+            <!-- Submit button -->
+            <button type="submit">Save Changes</button>
+        </form>
+
+        <!-- Add space between forms -->
+        <div style="margin-top: 20px;"></div>
+
+        <!-- Delete Account Form at the bottom of the page -->
+        <form id="deleteAccountFormBottom" onsubmit="return confirmDelete();">
+            <button type="submit" class="delete-button" style="color: red; background: none; border: none;">Delete Account</button>
+        </form>
+    </div>
+</main>
+
+<script>
+    function confirmDelete() {
+        // Ask for confirmation
+        const userConfirmed = window.confirm('Are you sure you want to delete your account?');
+
+        // If the user confirms, redirect to the login page
+        if (userConfirmed) {
+            window.location.href = '/login';
+        }
+
+        // Prevent form submission
+        return false;
+    }
+</script>
 
 <%- include ('../partials/footer') %>

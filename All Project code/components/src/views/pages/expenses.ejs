@@ -64,7 +64,7 @@
                       <td class="row-data"><%=receipts[i].date.toLocaleDateString()%></td>
                       <td class="row-data"><%=receipts[i].category%></td>
                       <td class="row-data"><%=receipts[i].description%></td>
-                      <td class="row-data" style=<%=receipts[i].income ? 'color:green' : 'color:red'%>>$<%=receipts[i].amount.toFixed(2)%></td>
+                      <td class="row-data" style=<%=receipts[i].income  ? 'color:green' : 'color:red'%>>$<%=receipts[i].amount.toFixed(2)%></td>
                       <td class="row-data">
                         <i class="bi bi-info-circle" style="cursor:pointer" onclick="requestInfo(this)"></i>
                       </td>
