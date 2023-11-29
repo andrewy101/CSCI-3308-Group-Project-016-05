@@ -82,3 +82,13 @@ body {
     color:white;
     font-style:italic; font-weight: bold;
 }
+
+#errorCard{
+    width:60%;
+}
+#errorColumn{
+    margin-top:300px;
+}
+#errorTitle{
+    margin-top:20px;
+}
