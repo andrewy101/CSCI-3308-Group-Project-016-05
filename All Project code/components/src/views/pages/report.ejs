@@ -1,6 +1,11 @@
 <%- include ('../partials/head') %>
 <%- include ('../partials/menu') %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://unpkg.com/jspdf-autotable@3.7.1/dist/jspdf.plugin.autotable.js"></script>
+
 <main>
+    
  <!-- //per month -->
 
 <!-- Like a word document -->
@@ -29,10 +34,12 @@
 
 
         <% if(Expenses[0].length>0) {%>
+
+      <div>
           
           <h3>Monthly report for <%- Expenses[2][0].monthstring%>:</h3>
 
-        <table class="table" style="width:100%;padding:10px;">
+        <table  id="toprint" class="table" style="width:100%;padding:10px;">
             <thead>
                 <tr>
                     <th>Expense</th>                
@@ -55,7 +62,7 @@
                         <td><%- Expenses.date.toLocaleDateString() %></td>                      
                         <td><%- Expenses.category %></td>
                     </tr>
-
+                    
                 <% })%>
                 
                 <tr>
@@ -72,14 +79,39 @@
                 </tr>
             </tbody>
         </table>
-        
-        
+      </div>
+      <script>
+        window.jsPDF = window.jspdf.jsPDF;
+        function printPDF() {
+            console.log("break")
+            var doc = new jsPDF();
+            doc.text("Expense report for <%- Expenses[2][0].monthstring%>", 14,11,)
+            doc.autoTable({
+                html: '#toprint',
+                theme: 'grid',
+                
+                headStyles: {
+                fillColor: [20, 20, 86]
+                    },
+                 })
+            doc.save('<%- Expenses[2][0].monthstring%> monthly spending report.pdf');
+            
+        };      
+    
+    </script>
+      
+      <button id="printpdfbutton" class="btn btn-primary" onclick="printPDF()">Download PDF</button>
         <%} else{ %>
           <h3>No data available for this month</h3>
         <%}%>
+        
 
         </div>
     </div>
+    
+    
+
+
 </main>
 
 
