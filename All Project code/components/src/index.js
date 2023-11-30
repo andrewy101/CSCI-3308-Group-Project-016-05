@@ -297,7 +297,15 @@ app.get('/report', (req, res) => {
   const username = req.session.user.username;
 
   query1 = `SELECT * FROM receipts WHERE username = '${username}' AND EXTRACT(MONTH FROM date) = ${month} ORDER BY date ASC;`;
-  querytotal = `SELECT  SUM(CASE WHEN income = false THEN amount ELSE 0 END) AS monthlyTotalSpendings, SUM(CASE WHEN income = true THEN amount ELSE 0 END)  monthlyTotalIncome FROM receipts WHERE username = ${username} AND EXTRACT(MONTH FROM date) = ${month};`;
+  querytotal = `
+
+  SELECT 
+    SUM(CASE WHEN income = false THEN amount ELSE 0 END) as monthlyTotalSpendings,
+    SUM(CASE WHEN income = true THEN amount ELSE 0 END) as monthlyTotalIncome
+  FROM receipts 
+  WHERE username = '${username}' 
+  AND EXTRACT(MONTH FROM date) = ${month};`;
+  
   getmonthname = `SELECT to_char(date, 'Month') AS monthstring FROM receipts WHERE username = '${username}' AND EXTRACT(MONTH FROM date) = ${month};`;
   db.task('get-everything', task => {
     return task.batch([
