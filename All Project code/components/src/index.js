@@ -286,8 +286,33 @@ app.get('/report', (req, res) => {
       message: 'Please login or make an account.',
       error: true
     });
-  } 
-  res.render('pages/report');
+  }  
+  
+
+  if(!req.query.month){
+    req.query.month = '2023-12'; //default to current month
+  }
+
+  const month = req.query.month;
+  const username = req.session.user.username;
+
+  query1 = `SELECT * FROM receipts WHERE username = '${username}' AND EXTRACT(MONTH FROM date) = ${month} ORDER BY date ASC;`;
+  querytotal = `SELECT  SUM(CASE WHEN income = false THEN amount ELSE 0 END) AS monthlyTotalSpendings, SUM(CASE WHEN income = true THEN amount ELSE 0 END)  monthlyTotalIncome FROM receipts WHERE username = ${username} AND EXTRACT(MONTH FROM date) = ${month};`;
+  getmonthname = `SELECT to_char(date, 'Month') AS monthstring FROM receipts WHERE username = '${username}' AND EXTRACT(MONTH FROM date) = ${month};`;
+  db.task('get-everything', task => {
+    return task.batch([
+      task.any(query1), //query 1
+      task.any(querytotal), //query 2
+      task.any(getmonthname)
+    ]);
+  })
+    .then(Expenses => {
+        res.render('pages/report', {
+        Expenses
+        })
+  
+    });
+
 });
 
 app.get('/profile', (req, res) => {
