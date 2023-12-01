@@ -46,3 +46,36 @@ Follow-up items, including agreed-on roles and responsibilities:
     - Julie will be working on the profile page
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Meeting 3, 11/30/2023
+Modality: Zoom
+Duration: 15 minutes
+Scribed by: Andrew Yang
+
+Overview:
+
+    - Showed the TA our progress since last week, including the functionality for all of the pages (login, registration, profile, expenses, report page, profile page).
+    plans for next week. 
+    - The TA instructed us to complete the test cases for all of the features of our website.
+    - The website will be production ready by the end of next week.
+    - Discussed several options to improve our design (listed below).
+
+Decisions made: 
+
+   - We will add an option for registered users to upload a profile picture, which will be displayed as an icon on the navbar as well as in the profile page.
+   - The website will notify users upon successful login.
+   - In the profile page, display the up-to-date username.
+
+Alternative actions/options discussed:
+
+    - We discussed the possibility of additional features in our application using external APIs. Namely, an option for users to input data through Optical Character Recognition (OCR). We determined there are inherent difficulties with the OCR approach due to the non-standardized nature of receipts in general (A Starbucks receipt will look different from a Costco receipt).
+    - Instead of OCR, we proposed a simpler approach of parsing data from spreadsheets instead, or require users to format their scans.
+
+Follow-up items, including agreed-on roles and responsibilities:
+
+    - Andrew and Michael will explore externals APIs for additional functionality, such as the ability to
+      scan data from spreadsheets and images. If time permits, polish the website's aesthetics.
+    - Patrick will finish features for the navigation bar.
+    - Julie will add finishing touches to the profile page.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
