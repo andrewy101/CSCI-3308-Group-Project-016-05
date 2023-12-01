@@ -438,4 +438,120 @@ app.post('/login', async (req, res) => {
   
 });
 
+
+
+// Delete Account Endpoint
+app.delete('/profile/delete', async (req, res) => {
+  try {
+      const { username } = req.session.user;
+ 
+ 
+      // Add logic to delete the user's account from the database
+      await db.none('DELETE FROM users WHERE username = $1', [username]);
+ 
+ 
+      // Add logic to delete the user's profile picture file (if it exists)
+      const profilePicturePath = `public/uploads/profile/profile_${username}`;
+      if (fs.existsSync(profilePicturePath)) {
+          fs.unlinkSync(profilePicturePath);
+      }
+ 
+ 
+      // Clear the session and respond with success
+      req.session.destroy();
+      res.json({ success: true });
+  } catch (error) {
+      console.error('Error deleting account:', error);
+      res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+ });
+ 
+ 
+ 
+ 
+ 
+ 
+ // Profile settings page - GET route
+ app.get('/profile/settings', (req, res) => {
+  // Render the profile settings page
+  res.render('pages/profile'); // Adjust the path if needed
+ });
+ 
+ 
+ // Change Username - POST route
+ app.post('/profile/settings/username', async (req, res) => {
+  const currentUser = req.session.user;
+  const newUsername = req.body.newUsername;
+ 
+ 
+  try {
+    // Check if newUsername is provided
+    if (!newUsername) {
+      return res.status(400).json({ success: false, error: 'New username is required.' });
+    }
+ 
+ 
+    // Update the current user's username in the 'users' table
+    const updateUsernameQuery = `
+      UPDATE users
+      SET username = $1
+      WHERE username = $2
+    `;
+    await db.none(updateUsernameQuery, [newUsername, currentUser.username]);
+ 
+ 
+    // Update the username in the session
+    req.session.user.username = newUsername;
+ 
+ 
+    // Add a success message to the session
+    req.session.successMessage = 'Username updated successfully';
+ 
+ 
+    res.redirect('/profile/settings');
+  } catch (error) {
+    console.error('Error updating username:', error);
+    res.status(500).send('Internal Server Error');
+  }
+ });
+ 
+ 
+ // Change Password - POST route
+ app.post('/profile/settings/password', async (req, res) => {
+  const currentUser = req.session.user;
+  const { newPassword, confirmPassword } = req.body;
+ 
+ 
+  try {
+    // Validate that newPassword and confirmPassword match
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ success: false, error: 'Passwords do not match' });
+    }
+ 
+ 
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+ 
+ 
+    // Update the current user's password in the 'users' table
+    const updatePasswordQuery = `
+      UPDATE users
+      SET password = $1
+      WHERE username = $2
+    `;
+    await db.none(updatePasswordQuery, [hashedPassword, currentUser.username]);
+ 
+ 
+    // Add a success message to the session
+    req.session.successMessage = 'Password updated successfully';
+ 
+ 
+    res.redirect('/profile/settings');
+  } catch (error) {
+    console.error('Error updating password:', error);
+    res.status(500).send('Internal Server Error');
+  }
+ });
+ 
+
 module.exports = app.listen(3000);

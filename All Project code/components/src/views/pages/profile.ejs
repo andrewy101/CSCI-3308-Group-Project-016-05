@@ -1,65 +1,117 @@
 <%- include ('../partials/head') %>
 <%- include ('../partials/menu') %>
 <main>
-    <div class="col"><%- include ('../partials/message') %></div>
-    <div class="container">
-        <h4 class="display-4">Profile Settings</h4>
-
-        <!-- Edit Profile Form -->
-        <form action="/profile/settings/photo" method="POST" enctype="multipart/form-data">
-            <!-- Profile picture upload -->
-            <label for="profilePicture">Edit Profile Picture:</label>
-            <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
-
-            <!-- Submit button for profile photo -->
-            <button type="submit">Save Profile Photo</button>
-        </form>
-
-        <!-- Add space between forms -->
-        <div style="margin-top: 20px;"></div>
-
-        <!-- Change Username and Password Form -->
-        <form action="/profile/settings" method="POST" enctype="multipart/form-data">
-            <!-- Username change input -->
-            <label for="newUsername">Change Username:</label>
-            <input type="text" id="newUsername" name="newUsername" required>
-
-            <!-- Password change -->
-            <label for="newPassword">Change Password:</label>
-            <input type="password" id="newPassword" name="newPassword" required>
+   <div class="col"><%- include ('../partials/message') %></div>
+   <div class="container">
+       <h4 class="display-4">Profile Settings</h4>
 
 
 
-            <!-- Add space between forms -->
-            <div style="margin-top: 20px;"></div>
 
-            <!-- Submit button -->
-            <button type="submit">Save Changes</button>
-        </form>
+<!-- Change Username Form -->
+<form action="/profile/settings/username" method="POST">
+   <div class="form-group">
+   <h1>Change Username</h1>
+     <label>New Username</label>
+     <input type="text" class="form-control" name="newUsername" required>
+   </div>
+   <div class="form-group" style="margin-top: 20px;">
+     <button type="submit" class="btn btn-primary">Change Username</button>
+   </div>
+ </form>
+  <!--Space-->
+ <div style="margin-bottom: 40px;"></div>
 
-        <!-- Add space between forms -->
-        <div style="margin-top: 20px;"></div>
 
-        <!-- Delete Account Form at the bottom of the page -->
-        <form id="deleteAccountFormBottom" onsubmit="return confirmDelete();">
-            <button type="submit" class="delete-button" style="color: red; background: none; border: none;">Delete Account</button>
-        </form>
-    </div>
-</main>
+<!-- Change Password Form -->
+<form action="/profile/settings/password" method="POST">
+   <div class="form-group">
+       <h1>Change Password</h1>
+       <label>New Password</label>
+       <input type="password" class="form-control" name="newPassword" required>
+   </div>
+   <div class="form-group">
+       <label>Confirm Password</label>
+       <input type="password" class="form-control" name="confirmPassword" required>
+   </div>
+   <!-- Add space between form and submit button -->
+   <div style="margin-bottom: 20px;"></div>
+   <div class="form-group">
+       <button type="submit" class="btn btn-primary">Change Password</button>
+   </div>
+</form>
+   <!--Space-->
+   <div style="margin-bottom: 80px;"></div>
+
+
+
+
+<!-- Delete Account Form at the bottom of the page -->
+<h3>Delete Account?</h3>
+<form id="deleteAccountFormBottom" onsubmit="return confirmDelete();">
+   <button type="submit" class="delete-button" style="color: red; background: none; border: none;">Please click here if you wish to delete your BudgetBeam account</button>
+</form>
+
 
 <script>
-    function confirmDelete() {
-        // Ask for confirmation
-        const userConfirmed = window.confirm('Are you sure you want to delete your account?');
+   function confirmChanges() {
+       // Get values from the form
+       const newUsername = document.getElementById('newUsername').value;
+       const newPassword = document.getElementById('newPassword').value;
 
-        // If the user confirms, redirect to the login page
-        if (userConfirmed) {
-            window.location.href = '/login';
-        }
 
-        // Prevent form submission
-        return false;
-    }
+       // Check if both fields are non-empty
+       if (newUsername.trim() !== '' && newPassword.trim() !== '') {
+           // Ask for confirmation
+           const userConfirmed = window.confirm('Are you sure you want to save changes?');
+
+
+           // If the user confirms, submit the form
+           if (userConfirmed) {
+               document.getElementById('profileSettingsForm').submit();
+           }
+       } else {
+           // Display an alert if fields are empty
+           alert('New username and password are required.');
+       }
+   }
+
+
+   function confirmDelete() {
+       // Ask for confirmation
+       const userConfirmed = window.confirm('Are you sure you want to delete your account?');
+
+
+       // If the user confirms, send a request to delete the account
+       if (userConfirmed) {
+           fetch('/profile/delete', {
+               method: 'DELETE',
+               headers: {
+                   'Content-Type': 'application/json',
+               },
+           })
+           .then(response => response.json())
+           .then(data => {
+               if (data.success) {
+                   // Redirect to the login page after successful deletion
+                   window.location.href = '/login';
+               } else {
+                   // Handle deletion failure
+                   console.error('Account deletion failed.');
+               }
+           })
+           .catch(error => {
+               console.error('Error:', error);
+           });
+       }
+
+
+       // Prevent form submission
+       return false;
+   }
 </script>
+
+
+
 
 <%- include ('../partials/footer') %>
