@@ -54,7 +54,7 @@ Scribed by: Andrew Yang
 
 Overview:
 
-    - Showed the TA our progress since last week, including the functionality for all of the pages (login,	 registration, profile, expenses, report page, profile page).
+    - Showed the TA our progress since last week, including the functionality for all of the pages (login, registration, profile, expenses, report page, profile page).
     plans for next week. 
     - The TA instructed us to complete the test cases for all of the features of our website.
     - The website will be production ready by the end of next week.
