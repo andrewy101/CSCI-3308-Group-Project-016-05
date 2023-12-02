@@ -69,10 +69,12 @@ app.get('/expenses', (req, res) => {
       error: true
     });
   }
+  const username = req.session.user.username;
   db.any(`SELECT * FROM receipts WHERE username = $1 ORDER BY date DESC;`, [req.session.user.username])
   .then(receipts => {
     res.render('pages/expenses', {
-      receipts
+      receipts,
+      curr_user: username
     });
   });
 });
@@ -85,10 +87,12 @@ app.get('/expenses/new', (req, res) => {
       error: true
     });
   }  
+  const username = req.session.user.username;
   const categories = db.any(`SELECT * FROM categories WHERE username IS NULL OR username = $1;`, [req.session.user.username])
   .then(categories => {
     res.render('pages/newExpense', {
-      categories
+      categories,
+      curr_user: username
     });
   });
 });
@@ -101,6 +105,7 @@ app.post('/expenses/new', (req, res) => {
       error: true
     });
   }  
+
   db.tx(async t => {
     const receipt = await t.any(`INSERT INTO receipts (username, income, date, category, description, amount) values($1, $2, $3, $4, $5, $6) RETURNING *;`, 
     [req.session.user.username, req.body.income, req.body.date, req.body.category, req.body.description, req.body.amount]);
@@ -224,10 +229,10 @@ app.get('/home', async (req, res) => {
 
   else{
     if(req.query.error){
-      res.render('pages/home', {data, message: "No expenses yet for selected month!"});
+      res.render('pages/home', {data, message: "No expenses yet for selected month!", curr_user: username} );
     }
     else{
-      res.render('pages/home', {data});
+      res.render('pages/home', {data, curr_user: username});
 
     }
   }
@@ -244,7 +249,7 @@ app.get('/home', async (req, res) => {
     
       if(get_month.length === 0){
         res.render('pages/homeError', {
-        message: "No expenses yet to display for user " + username + "!"
+        message: "No expenses yet to display for user " + username + "!", curr_user: username
         });
       }
       else{
@@ -316,7 +321,8 @@ app.get('/report', (req, res) => {
   })
     .then(Expenses => {
         res.render('pages/report', {
-        Expenses
+        Expenses,
+        curr_user: username
         })
   
     });
@@ -330,7 +336,8 @@ app.get('/profile', (req, res) => {
       error: true
     });
   } 
-  res.render('pages/profile');
+  const username = req.session.user.username;
+  res.render('pages/profile', {curr_user: username});
 });
 
 //Welcome endpoint
@@ -474,7 +481,8 @@ app.delete('/profile/delete', async (req, res) => {
  // Profile settings page - GET route
  app.get('/profile/settings', (req, res) => {
   // Render the profile settings page
-  res.render('pages/profile'); // Adjust the path if needed
+  const username = req.session.user.username;
+  res.render('pages/profile', {curr_user: username}); // Adjust the path if needed
  });
  
  

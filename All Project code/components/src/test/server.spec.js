@@ -26,6 +26,7 @@ describe('Server!', () => {
   })
   // ===========================================================================
   // TO-DO: Part A Login unit test case
+var Cookies;
 
 describe('Login Input Validation', () => {
 
