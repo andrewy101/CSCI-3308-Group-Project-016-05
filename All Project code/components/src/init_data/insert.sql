@@ -40,5 +40,6 @@ insert into receipts (description, username, category, amount, date, income) val
 insert into receipts (description, username, category, amount, date, income) values ('Bike Shop', 'username', 'Other', 20.49, '2023-11-15', false);
 insert into receipts (description, username, category, amount, date, income) values ('King Soopers', 'username', 'Food', 200.12, '2023-11-04', false);
 
+--Item inserts
 insert into items (receipt_id, name, amount) values (1, 'Orange', 3.29);
 insert into items (receipt_id, name, amount) values (1, 'Bread', 7.49);

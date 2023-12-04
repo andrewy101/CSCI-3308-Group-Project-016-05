@@ -3,24 +3,11 @@
 
 <main>
 
-  <div class="row justify-content-center">
-    <div class="col-md-12 col-sm-12" id="errorColumn">
-        <div class="card shadow-lg border-0 rounded-lg mt-5 mx-auto" id="errorCard">
-            <h3 class="card-header display-1 text-muted text-center">
-                <%= message %>
-            </h3>
-
-            <span class="card-subtitle mb-2 text-muted text-center" id="errorTitle">
-                You don't have any expenses yet! To add expenses, click the button below.
-            </span>
-
-            <div class="card-body mx-auto">
-                <a type="button" href="/expenses"
-                class="btn btn-primary"> Add expenses </a>
-            </div>
-        </div>
-    </div>
-</div>
+  <div class="container" style="text-align:center; margin-top:30px;">
+    <h1 class="display-2"><%= message%></h1>
+    <p class="display-6" style="margin-top:30px;">You don't have any expenses yet! To add expenses, click the button below.</p>
+    <a type="button" href="/expenses" class="btn btn-primary" style="margin-top:30px; "> Add expenses </a>
+  </div>
   
   
   
