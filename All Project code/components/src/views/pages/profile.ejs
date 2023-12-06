@@ -6,51 +6,149 @@
        <h4 class="display-4">Profile Settings</h4>
 
 
+     <!-- Display current username -->
+     <h2 style="display: inline; margin-right: 10px; font-weight: normal;">Hello, </h2>
+     <h1 style="display: inline;"><%= curr_user %> !</h1>
+     
+
+        <!--Space-->
+        <div style="margin-bottom: 40px;"></div>
 
 
-<!-- Change Username Form -->
-<form action="/profile/settings/username" method="POST">
-   <div class="form-group">
-   <h1>Change Username</h1>
-     <label>New Username</label>
-     <input type="text" class="form-control" name="newUsername" required>
-   </div>
-   <div class="form-group" style="margin-top: 20px;">
-     <button type="submit" class="btn btn-primary">Change Username</button>
-   </div>
- </form>
-  <!--Space-->
- <div style="margin-bottom: 40px;"></div>
+       <div class="col-md-4 col-md-offset-4 col-sm-6 col-xs-12 profile-badge">
+        <form id="profile-form" enctype="multipart/form-data">
+            <div class="profile-pic">
+                <img alt="User Pic" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png" id="profile-image1" height="200">
+                <input id="profile-image-upload" type="file" onchange="previewFile()">
+                <div style="color:#999;"></div>
+            </div>
+
+            <!--Space-->
+            <div style="margin-bottom: 20px;"></div>
+
+            <button type="submit" id="update-profile-btn" class="btn btn-primary">Update Profile</button>
+        </form>
+    
+        <script>
+            // Function to handle file preview
+            function previewFile() {
+                var preview = document.getElementById('profile-image1');
+                var fileInput = document.getElementById('profile-image-upload');
+                var file = fileInput.files[0];
+    
+                var reader = new FileReader();
+                reader.onloadend = function () {
+                    preview.src = reader.result;
+                };
+    
+                if (file) {
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.src = "https://d30y9cdsu7xlg0.cloudfront.net/png/138926-200.png";
+                }
+            }
+    
+            // Function to handle profile update
+            document.getElementById('profile-form').addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the form from submitting in the traditional way
+    
+                var fileInput = document.getElementById('profile-image-upload');
+                var file = fileInput.files[0];
+    
+                if (file) {
+                    // Create a FormData object to send the file to the server
+                    var formData = new FormData();
+                    formData.append('profilePhoto', file);
+    
+                    // Use fetch or XMLHttpRequest to send the file to the server
+                    fetch('/update-profile', {
+                        method: 'POST',
+                        body: formData,
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Profile updated successfully:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error updating profile:', error);
+                    });
+                } else {
+                    console.log('No file selected.');
+                }
+            });
+        </script>
+    </div>
+    
+    
+    
+
+    <!-- <div class="col-md-6 m-auto">
+        <h1 class="my-4">Lets upload some stuff</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+        <div class="custom-file mb-3">
+        <input type="file" class="custom-file-input" name="file" id="file1" onchange="readSingleFile(this.files)">
+        <label class="custom-file-label" for="file1" id="file-label">Choose file</label>
+        </div>
+        <input type="submit" value="Submit" class="btn btn-primary btn-block">
+        </form>
+        </div> -->
+       
 
 
-<!-- Change Password Form -->
-<form action="/profile/settings/password" method="POST">
-   <div class="form-group">
-       <h1>Change Password</h1>
-       <label>New Password</label>
-       <input type="password" class="form-control" name="newPassword" required>
-   </div>
-   <div class="form-group">
-       <label>Confirm Password</label>
-       <input type="password" class="form-control" name="confirmPassword" required>
-   </div>
-   <!-- Add space between form and submit button -->
-   <div style="margin-bottom: 20px;"></div>
-   <div class="form-group">
-       <button type="submit" class="btn btn-primary">Change Password</button>
-   </div>
-</form>
-   <!--Space-->
-   <div style="margin-bottom: 80px;"></div>
+          <!--Space-->
+          <div style="margin-bottom: 80px;"></div>
+
+
+    <!-- Change Username Form -->
+    <form action="/profile/settings/username" method="POST">
+    <div class="form-group">
+    
+          <!--Space-->
+        <div style="margin-bottom: 10px;"></div>
+
+
+    <h3>Change Username</h3>
+        <label>New Username</label>
+        <input type="text" class="form-control" name="newUsername" required>
+    </div>
+    <div class="form-group" style="margin-top: 20px;">
+        <button type="submit" class="btn btn-primary">Change Username</button>
+    </div>
+    </form>
+
+    <!--Space-->
+    <div style="margin-bottom: 40px;"></div>
+
+
+    <!-- Change Password Form -->
+    <form action="/profile/settings/password" method="POST">
+    <div class="form-group">
+        <h3>Change Password</h3>
+        <label>New Password</label>
+        <input type="password" class="form-control" name="newPassword" required>
+    </div>
+    <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" class="form-control" name="confirmPassword" required>
+    </div>
+
+    <!-- Add space between form and submit button -->
+    <div style="margin-bottom: 20px;"></div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Change Password</button>
+    </div>
+    </form>
+    <!--Space-->
+    <div style="margin-bottom: 300px;"></div>
 
 
 
 
-<!-- Delete Account Form at the bottom of the page -->
-<h3>Delete Account?</h3>
-<form id="deleteAccountFormBottom" onsubmit="return confirmDelete();">
-   <button type="submit" class="delete-button" style="color: red; background: none; border: none;">Please click here if you wish to delete your BudgetBeam account</button>
-</form>
+    <!-- Delete Account Form at the bottom of the page -->
+    <h3>Delete Account?</h3>
+    <form id="deleteAccountFormBottom" onsubmit="return confirmDelete();">
+    <button type="submit" class="delete-button" style="color: red; background: none; border: none;">Please click here if you wish to delete your BudgetBeam account</button>
+    </form>
 
 
 <script>

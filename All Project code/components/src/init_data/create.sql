@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS users(
     username VARCHAR(50) PRIMARY KEY NOT NULL,
-    password CHAR(60) NOT NULL
+    password CHAR(60) NOT NULL,
+    profile_photo BYTEA
 );
 
 --Each receipt will have several items, incoming_expense is 1 if the receipt represents income, 0 otherwise.
