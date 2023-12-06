@@ -7,7 +7,6 @@ const bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
 const path = require('path');
 
-
 // database configuration
 const dbConfig = {
   host: 'db', // the database server
@@ -611,43 +610,6 @@ app.delete('/profile/delete', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
  });
-
-
-
  
-// Profile Update
-app.post('/update-profile', (req, res) => {
-  // Assuming you are using a PostgreSQL database and pg-promise
-  const username = req.session.username; // Assuming you store the username in the session
-
-  // Assuming you use the 'pg-promise' library
-  // const db = pgp(dbConfig);
-
-  // Assuming 'profilePhoto' is the name attribute of the file input
-  const profilePhoto = req.files ? req.files.profilePhoto : null;
-
-  if (profilePhoto) {
-      // Assuming you have a column 'profile_photo' of type BYTEA in the 'users' table
-      const updateQuery = 'UPDATE users SET profile_photo = $1 WHERE username = $2';
-      
-      // Convert the binary data to Buffer (assuming it's a Buffer)
-      const bufferData = Buffer.from(profilePhoto.data, 'binary');
-
-      db.none(updateQuery, [bufferData, username])
-          .then(() => {
-              res.json({ success: true, message: 'Profile updated successfully' });
-          })
-          .catch(error => {
-              console.error('Error updating profile:', error);
-              res.status(500).json({ success: false, message: 'Error updating profile' });
-          });
-  } else {
-      res.status(400).json({ success: false, message: 'No file selected.' });
-  }
-});
-
-
-
-
 
 module.exports = app.listen(3000);
