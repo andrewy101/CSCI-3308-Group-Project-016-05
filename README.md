@@ -23,3 +23,6 @@ How to run locally:
 - The mocha/chai test cases will run automatically. Wait until they are finished.
 - Once the message 'Database connection successful' is displayed in the terminal, open your browser and navigate to 'http://localhost:3000/' to view the web application.
 - Be sure that the command 'docker compose down --volumes' is run if you are restarting the project after closing the docker container to reset the DB.
+
+Link to deployed application:
+- http://recitation-16-team-05.eastus.cloudapp.azure.com:3000/

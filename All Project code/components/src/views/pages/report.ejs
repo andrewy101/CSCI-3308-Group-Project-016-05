@@ -6,31 +6,37 @@
 
 <main>
     
- <!-- //per month -->
-
-<!-- Like a word document -->
 
     <div class="col"><%- include ('../partials/message') %></div>
     <div class="container">
   
-        <h4 class="display-4">Create Expense Report</h4>
-        <form action ="/report" method = "get">
-            <select class="form-select" type="month" name="month" class="form-group" id="monthInput" onchange="this.form.submit();">
-                <option value="-1">Select a month</option>
-                <option value="1">January</option>
-                <option value="2">February</option>
-                <option value="3">March</option>
-                <option value="4">April</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-                <option value="7">July</option>
-                <option value="8">August</option>
-                <option value="9">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-            </select>
-        </form>
+        <h4 class="display-4" style="margin-top:30px; margin-bottom:30px;">Create Expense Report</h4>
+        <div class="shadow-sm p-3 mb-5 bg-white rounded" style="width:500px;">
+            <div class="card-title" style="margin-left:15px;">
+                <b class="display-6">Month</b>
+            </div>
+            <div class="card-body">
+                <form action ="/report" method = "get">
+                    <select class="form-select" type="month" name="month" class="form-group" id="monthInput" onchange="this.form.submit();">
+                        <option value="-1">Select a month</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </form>
+
+            </div>
+        </div>
+       
 
 
         <% if(Expenses[0].length>0) {%>
@@ -39,7 +45,7 @@
           
           <h3>Monthly report for <%- Expenses[2][0].monthstring%>:</h3>
 
-        <table  id="toprint" class="table" style="width:100%;padding:10px;">
+        <table id="toprint" class="table" style="width:100%;padding:10px;">
             <thead>
                 <tr>
                     <th>Expense</th>                
@@ -50,7 +56,6 @@
             </thead>
             <tbody>
                 <%Expenses[0].forEach(Expenses => { %>
-                    <!-- table data  -->
                     <tr>
                         <td><%- Expenses.description %></td>
                         <%if(!Expenses.income){%>
@@ -102,7 +107,7 @@
       
       <button id="printpdfbutton" class="btn btn-primary" onclick="printPDF()">Download PDF</button>
         <%} else{ %>
-          <h3>No data available for this month</h3>
+          <h3 style="margin-top:30px;">No data available for this month!</h3>
         <%}%>
         
 

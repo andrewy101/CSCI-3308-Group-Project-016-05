@@ -3,55 +3,49 @@
 <main>
    <div class="col"><%- include ('../partials/message') %></div>
    <div class="container">
-       <h4 class="display-4">Profile Settings</h4>
+       <h4 class="display-4" style="margin-top:30px; margin-bottom:30px;">Profile Settings</h4>
 
 
 
+    
+        <form action="/profile/settings/username" method="POST">
+            <div class="form-group">
+            <h1>Change Username</h1>
+                <label>New Username</label>
+                <input type="text" class="form-control" name="newUsername" placeholder="<%= curr_user %>" required style="width:400px;">
+            </div>
+            <div class="form-group" style="margin-top: 20px;">
+                <button type="submit" class="btn btn-primary">Change Username</button>
+            </div>
+        </form>
+        <div style="margin-bottom: 40px;"></div>
 
-<!-- Change Username Form -->
-<form action="/profile/settings/username" method="POST">
-   <div class="form-group">
-   <h1>Change Username</h1>
-     <label>New Username</label>
-     <input type="text" class="form-control" name="newUsername" placeholder="<%= curr_user %>" required>
-   </div>
-   <div class="form-group" style="margin-top: 20px;">
-     <button type="submit" class="btn btn-primary">Change Username</button>
-   </div>
- </form>
-  <!--Space-->
- <div style="margin-bottom: 40px;"></div>
+        <form action="/profile/settings/password" method="POST" onsubmit="return validatePassword()" id="pwdChangeForm">
+            <div class="form-group">
+                <h1>Change Password</h1>
+                <label>New Password</label>
+                <input type="password" class="form-control" name="newPassword" id="new_password" required style="width:400px;">
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" class="form-control" name="confirmPassword" id="confirm_password" required style="width:400px;">
+                <p id="pwdMessage" hidden style="color:red;">Passwords do not match!</p>
+            </div>
+            
+            <div style="margin-bottom: 20px;"></div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Change Password</button>
+            </div>
+            </form>
 
+            <div style="margin-bottom: 80px;"></div>
 
-<!-- Change Password Form -->
-<form action="/profile/settings/password" method="POST" onsubmit="return validatePassword()" id="pwdChangeForm">
-   <div class="form-group">
-       <h1>Change Password</h1>
-       <label>New Password</label>
-       <input type="password" class="form-control" name="newPassword" id="new_password" required>
-   </div>
-   <div class="form-group">
-       <label>Confirm Password</label>
-       <input type="password" class="form-control" name="confirmPassword" id="confirm_password" required>
-       <p id="pwdMessage" hidden style="color:red;">Passwords do not match!</p>
-   </div>
-   <!-- Add space between form and submit button -->
-   <div style="margin-bottom: 20px;"></div>
-   <div class="form-group">
-       <button type="submit" class="btn btn-primary">Change Password</button>
-   </div>
-</form>
-   <!--Space-->
-   <div style="margin-bottom: 80px;"></div>
+            <h3>Delete Account?</h3>
+            <form id="deleteAccountFormBottom" onsubmit="return confirmDelete();">
+            <button type="submit" class="delete-button" style="color: red; background: none; border: none;">Please click here if you wish to delete your BudgetBeam account</button>
+        </form>
 
-
-
-
-<!-- Delete Account Form at the bottom of the page -->
-<h3>Delete Account?</h3>
-<form id="deleteAccountFormBottom" onsubmit="return confirmDelete();">
-   <button type="submit" class="delete-button" style="color: red; background: none; border: none;">Please click here if you wish to delete your BudgetBeam account</button>
-</form>
+    </div>
 
 
 <script>
