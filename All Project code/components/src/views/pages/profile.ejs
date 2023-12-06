@@ -13,7 +13,7 @@
    <div class="form-group">
    <h1>Change Username</h1>
      <label>New Username</label>
-     <input type="text" class="form-control" name="newUsername" required>
+     <input type="text" class="form-control" name="newUsername" placeholder="<%= curr_user %>" required>
    </div>
    <div class="form-group" style="margin-top: 20px;">
      <button type="submit" class="btn btn-primary">Change Username</button>
@@ -24,15 +24,16 @@
 
 
 <!-- Change Password Form -->
-<form action="/profile/settings/password" method="POST">
+<form action="/profile/settings/password" method="POST" onsubmit="return validatePassword()" id="pwdChangeForm">
    <div class="form-group">
        <h1>Change Password</h1>
        <label>New Password</label>
-       <input type="password" class="form-control" name="newPassword" required>
+       <input type="password" class="form-control" name="newPassword" id="new_password" required>
    </div>
    <div class="form-group">
        <label>Confirm Password</label>
-       <input type="password" class="form-control" name="confirmPassword" required>
+       <input type="password" class="form-control" name="confirmPassword" id="confirm_password" required>
+       <p id="pwdMessage" hidden style="color:red;">Passwords do not match!</p>
    </div>
    <!-- Add space between form and submit button -->
    <div style="margin-bottom: 20px;"></div>
@@ -54,28 +55,20 @@
 
 
 <script>
-   function confirmChanges() {
-       // Get values from the form
-       const newUsername = document.getElementById('newUsername').value;
-       const newPassword = document.getElementById('newPassword').value;
 
+    function validatePassword() {
+        const newPass = document.getElementById('new_password').value.trim();
+        const confirmPass = document.getElementById('confirm_password').value.trim();
 
-       // Check if both fields are non-empty
-       if (newUsername.trim() !== '' && newPassword.trim() !== '') {
-           // Ask for confirmation
-           const userConfirmed = window.confirm('Are you sure you want to save changes?');
-
-
-           // If the user confirms, submit the form
-           if (userConfirmed) {
-               document.getElementById('profileSettingsForm').submit();
-           }
-       } else {
-           // Display an alert if fields are empty
-           alert('New username and password are required.');
-       }
-   }
-
+        if (newPass !== confirmPass) {
+            document.getElementById('pwdMessage').removeAttribute('hidden');
+            return false;
+        }
+        else {
+            document.getElementById('pwdChangeForm').submit();
+            return true;
+        }
+}
 
    function confirmDelete() {
        // Ask for confirmation
