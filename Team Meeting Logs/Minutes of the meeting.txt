@@ -79,3 +79,41 @@ Follow-up items, including agreed-on roles and responsibilities:
     - Julie will add finishing touches to the profile page.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Meeting 4, 12/7/2023
+Modality: Zoom
+Duration: 15 minutes
+Scribed by: Julie Huang
+
+Overview:
+
+    - We showed the TA our presentation slides and some additional small features added to website
+    - TA instructed us to complete test cases
+    - TA emphasized to stay within the 10-minute time frame for the presentation
+
+Decisions made: 
+
+    - TA instructed us to add more to description of our website in the slides including:
+        - What is unique  about our website, even it's a minor difference
+        - What is not in the market right now? Why is our website different from competitors?
+        - How will our wbeiste be used by the end user and benefit them?
+   - During the presentation, we have 5 minutes to go through the whole wbesite, make sure to show everything, don't spend too much time on register and login page
+        - Show the main features on the website and make sure to cover everything
+        - Ensure presentation fits within the 10 minute time frame
+   - Give observations, this is the expected outcome, test with us being the end user and we give the observation
+        - Under observation, talk about everything, what is the user doing, answer all questions
+        - Show back end is comunicating with front end and database
+
+
+Alternative actions/options discussed:
+
+    - During our presentation, TA suggested to show how the tools were useful to us, we don't have to go through each tool in detail
+        - If we want we can pick 2-3 tools that stood out to us 
+        - Still mention all tools, but only go into detail for the most useful ones
+
+
+Follow-up items, including agreed-on roles and responsibilities:
+
+    - All team members will ensure to stay within the 10 minute timeframe
+    - Andrew will finish adding inserts
+    - All team members will add any final touches  
