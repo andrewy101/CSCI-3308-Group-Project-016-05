@@ -80,7 +80,7 @@
                 </tr>
                 <tr>
                     <th>Total:</th>
-                    <td style=<%=(Expenses[1][0].monthlytotalincome - Expenses[1][0].monthlytotalspendings)>=0 ? 'color:green' : 'color:red'%>>$<%- (Expenses[1][0].monthlytotalincome - Expenses[1][0].monthlytotalspendings).toFixed(2) %></td>
+                    <td style=<%=(Expenses[1][0].monthlytotalincome - Expenses[1][0].monthlytotalspendings)>=0 ? 'color:green' : 'color:red'%>><%=(Expenses[1][0].monthlytotalincome - Expenses[1][0].monthlytotalspendings)>=0 ? '$' : '-$'%><%- Math.abs((Expenses[1][0].monthlytotalincome - Expenses[1][0].monthlytotalspendings)).toFixed(2) %></td>
                 </tr>
             </tbody>
         </table>
